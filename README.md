@@ -1,6 +1,6 @@
 # NHL Prediction using Machine Learning
 
-<b> Project Background: </b> Using the 2017-2018 and 2018-2019 NHL Seasons as my training data, I will predict the 2019-2020 NHL Ganes using a Machine Learning Model. My variables will include: Date of the game, Home Team, Away Team, Result (training only - reflects Home Team), Home Goals, Home Shots, Home PIM (Penalties in Minutes), Away Goals, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters (reflects empty net goals for the winning team), Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. Prediction results will depend on whether it was the home or away team that won the game.
+<b> Project Background: </b> Using the 2017-2018 and 2018-2019 NHL Seasons as my training data, I will predict the 2019-2020 NHL games using a few different Machine Learning Models. I will treat this as a binary classification problem and predict two categories: win, or loss based on the outcome of the home team. My variables will include: Date of the game, Home Team, Away Team (date and team names will be removed for machine learning but will be present for exploratory analysis), Result (training only - reflects Home Team), Home Goals, Home Shots, Home PIM (Penalties in Minutes), Away Goals, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters (reflects empty net goals for the winning team), Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. 
 
 This is part 2 of my main overall project. In order to predict games, the NHL data needs to be structured in a specific way. If you're unfamiliar with this process or haven't read Part 1 of this project, please check out this link: https://github.com/DTegano/Web-Scraping-NHL-Data-for-Prediction-using-Machine-Learning
 
@@ -19,22 +19,62 @@ library(stats) # Group Functional
 library(plyr) # ddpylr for aggregation
 ```
 
+# Re-Structuring the Data to reflect Cumulative means
+
+I'll be the first to admit when I'm wrong about something. If you looked at part 1 of this project, you'll notice that most of my data was structured to use a cumulative sum - which meant that stats were aggregating for each team as the season went on. Unfortunately, it didn't take my long in my analysis to notice the problem with that. So before I jump into anything else, let me show you the issue I noticed:
+
+``` 
+> cor(ttrain$Home_Goals, ttrain$Home_BS)
+[1] 0.9595307
+> plot(ttrain$Home_Goals ~ ttrain$Home_BS)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/87491348-240a1c80-c605-11ea-8040-f6be85cdcbf7.png" width = 470 height = 250>
+
+The plot above shows the plot relationship between home goals and blocked shots. Notice anything? Typically, we wouldn't expect to see much of a relationship between these two variables - goals is more known to have a relationship with shots on goal. You can't score if you don't shoot the puck. However, since I used a cumulative sum for these stats, there is now a huge linear relationship between all of my predictor variables (since all of my stats are increasing with each other for every game). In the data science world, this is known as collinearity -  and a high amount of that in this case.
+
+To fix this problem, I had to go back to my raw data and apply the same scripting methods that I applied the first time around. However, this time I used a cumulative mean for all of my variables. With the new formatted data, we finally get the results that we would expect to see between these two variables: 
+
+```
+> cor(dtrain$Home_Goals, dtrain$Home_BS)
+[1] 0.06437274
+> plot(dtrain$Home_Goals ~ dtrain$Home_BS)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/87491760-3173d680-c606-11ea-8902-cd9be499187a.png" width = 470 height = 250>
+
+A correlation value of 0.064 makes much more sense than 0.959 between goals and blocked shots. We're finally ready to move on to the analysis. 
+
 # Importing the Data
 
-First, I'll import both my training and test set. For the sake of analysis, I'll combine both sets into one data frame:
+As we can see from the above, my machine learning data set will be imported into R as "Dtain" and "Dtest" (I've always gotten into the habit of using dt for 'data table' and because my initials happen to be dt). However, I also think there is a lot of value of also looking at the raw data - which is the data that shows each game's stats and results before manipulated into an aggregated data set. For this raw data, i'll import both my training and test set and combine both sets into one data frame:
 
 ```
-dtrain = read_excel("Training Final.xlsx", col_names = TRUE)
-dtest = read_excel("Test Final.xlsx", col_names = TRUE)
+dtrain = read_excel("Training Final CM.xlsx", col_names = TRUE)
+dtest = read_excel("Test Final CM.xlsx", col_names = TRUE)
 
-dt = rbind(dtrain, dtest)
+raw_2018 = read_excel("2017-2018 Training Base.xlsx", col_names = TRUE)
+raw_2019 = read_excel("2018-2019 Training Base.xlsx", col_names = TRUE)
+raw_2020 = read_excel("2019-2020 Test Base.xlsx", col_names = TRUE)
+
+df = rbind(raw_2018, raw_2019, raw_2020)
 ```
 
-Once I have combined my training set with my entire test set, I'll remove the Results column from my test set - as this will be the variable we will be predicting:
+Once I have combined my training set with my entire test set, I'll create new set and remove the Results column from my test set - as this will be the variable we will be predicting. I want to keep my Results variable in my original test set so that I can compare my machine learning results later on. I'll also remove the date and team names from my training and test set - as I will not need these variables when I make my predicitons. Finally, I need to make sure that my Prediction variable is set as a factor:
 
 ```
-dtest = dtest[,-4]
+test = dtest[,-4]
+
+
+dtrain = dtrain[, -c(1:3)]
+dtest = dtest[, -c(1:3)]
+
+dtrain$Result = as.factor(dtrain$Result)
+dtest$Result = as.factor(dtest$Result)
 ```
+
+For 
+
 
 # Analysis
 
