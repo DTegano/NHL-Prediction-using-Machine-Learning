@@ -229,6 +229,21 @@ Some interesting observations/notes from the 3 seasons worth of data: <p><p/>
 
 Now, I'll look at a few different variables to see how much of an impact they have of the outcome of the game when the variable is maximized and minimized. I'll spoil goals for you - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals <u> almost </u> lost every game (I believe there were 1 or 2 shootout victories at 0-0).
 
+For the following commands, I set up a quick function to return the name of the team, date, and result of the max-min value:
+
+```
+home_grab = function(x) {
+    gameinfo = list(paste(dt$Home[x]), paste(dt$Date[x]), paste(dt$Result[x]))
+    return(gameinfo)
+}
+
+
+away_grab = function(x) {
+    gameinfo = list(paste(dt$Away[x]), paste(dt$Date[x]), paste(dt$Result[x]))
+    return(gameinfo)
+}
+```
+
 <b>Shots</b>
 
 ```
@@ -245,7 +260,6 @@ Now, I'll look at a few different variables to see how much of an impact they ha
 [[3]]
 [1] "L"
 
-> 
 > summary(df$Away_S)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   13.00   26.00   30.00   30.96   35.00   60.00 
@@ -281,7 +295,228 @@ Now, I'll look at a few different variables to see how much of an impact they ha
 ```
 
 
-Aside from goals, shots can be considered the next greatest factor that can influence the result of a game.
+Aside from goals, shots can be considered the next greatest factor that can influence the result of a game. To have an impact on the outcome, we would expect that the teams with the maximum shot count would win their games and the teams with the lowest shot counts would lose their games. However, the results above indicate that at the highest and lowest shot totals, the teams generating those shots lost all of the games (note that "W" indicates a home win and "L" indicates an away win). The Carolina Hurrincanes recorded the most shots in single game - putting up 60 shots in November 2017. However, they lost that game - as did the Washington Capitals when they put up 58 shots as the home team in March 2019.
 
 
+<b>Hits</b>
 
+```
+> summary(df$Home_H)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   4.00   17.00   22.00   22.35   27.00   54.00 
+   
+> home_grab(df$Home_H==54) 
+[[1]]
+[1] "Pittsburgh Penguins"
+
+[[2]]
+[1] "2019-12-06"
+
+[[3]]
+[1] "W"
+
+> summary(df$Away_H)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2.00   16.00   21.00   21.41   26.00   67.00 
+   
+> away_grab(df$Away_H==67) #Away team WON
+[[1]]
+[1] "Montreal Canadiens"
+
+[[2]]
+[1] "2019-12-10"
+
+[[3]]
+[1] "L"
+
+
+> home_grab(df$Home_H==4)
+[[1]]
+[1] "Toronto Maple Leafs" "Chicago Blackhawks"  "Toronto Maple Leafs"
+[4] "Nashville Predators"
+
+[[2]]
+[1] "2018-11-24" "2019-02-18" "2019-12-23" "2020-02-22"
+
+[[3]]
+[1] "W" "W" "W" "W"
+
+> away_grab(df$Away_H==2) 
+[[1]]
+[1] "Chicago Blackhawks" "Chicago Blackhawks"
+
+[[2]]
+[1] "2017-12-14" "2018-03-17"
+
+[[3]]
+[1] "L" "W"
+```
+
+For hits, it can go either way. Either the maximum amount of hits per game can cause a team to dominate their opponent physically, or too many hits in a game can distract the players from what's important - scoring goals and winning the game. As we can see at the maximum amount of hits (54 for the home team and 67 for the away team), the teams with those hit amounts won their games. With that said, would we expect to see teams with much less hits lose their games? Well, that doesn't seem to be the case here with hits. When we look at the lowest hit totals (4 for the home team and 2 for the away team), the home team actually won all of their games at 4 hits while the away teams split their games (1 win, 1 loss) at 2 hits. With this mixed bag of results, we can't yet see the impact that hits have on the result.
+
+<b> Blocked Shots </b>
+ 
+ ```
+ > summary(df$Home_BS)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2.00   11.00   14.00   13.99   17.00   33.00 
+   
+> home_grab(df$Home_BS==33) 
+[[1]]
+[1] "Vegas Golden Knights" "New York Islanders"  
+
+[[2]]
+[1] "2018-11-14" "2020-01-06"
+
+[[3]]
+[1] "W" "W"
+
+
+> summary(df$Away_BS)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2.00   11.00   14.00   14.52   18.00   33.00 
+   
+> away_grab(df$Away_BS==33)
+[[1]]
+[1] "Colorado Avalanche"  "Philadelphia Flyers" "New York Rangers"   
+[4] "New York Islanders" 
+
+[[2]]
+[1] "2018-03-20" "2018-03-28" "2019-03-23" "2019-10-19"
+
+[[3]]
+[1] "L" "L" "L" "L"
+
+
+> home_grab(df$Home_BS==2)
+[[1]]
+[1] "Buffalo Sabres"    "St. Louis Blues"   "New Jersey Devils"
+[4] "Boston Bruins"    
+
+[[2]]
+[1] "2018-10-11" "2019-10-19" "2019-11-30" "2020-01-02"
+
+[[3]]
+[1] "L" "L" "L" "L"
+
+> away_grab(df$Away_BS==2) #Away team LOST
+[[1]]
+[1] "Boston Bruins"
+
+[[2]]
+[1] "2018-02-17"
+
+[[3]]
+[1] "W"
+```
+
+ Have we finally got some meaningful results when looking at the max and min values? Blocked shots has always been an underrated hockey factor in my mind and teams don't get enough credit when they do a good job of getting bodies in front of pucks. When we look at the max values (33 for both home and away), the teams won all of their games. When we look at the min values (2 for home and away), the teams lost of all of their games. Based on these facts, I'll assume that the amount of blocked shots can, in fact, influence the outcome of a hockey game.
+
+<b> Corsi </b>
+
+```
+summary(df$Home_Corsi)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  25.90   46.20   51.30   51.18   56.42   74.80 
+  
+> home_grab(df$Home_Corsi==74.8) 
+[[1]]
+[1] "Carolina Hurricanes"
+
+[[2]]
+[1] "2019-10-06"
+
+[[3]]
+[1] "W"
+
+> summary(df$Away_Corsi)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  25.20   43.58   48.70   48.82   53.80   74.10 
+  
+> away_grab(df$Away_Corsi==74.10) 
+[[1]]
+[1] "Carolina Hurricanes"
+
+[[2]]
+[1] "2019-03-15"
+
+[[3]]
+[1] "W"
+
+> home_grab(df$Home_Corsi==25.9) 
+[[1]]
+[1] "Columbus Blue Jackets"
+
+[[2]]
+[1] "2019-03-15"
+
+[[3]]
+[1] "W"
+
+> away_grab(df$Away_Corsi==25.2)
+[[1]]
+[1] "Tampa Bay Lightning"
+
+[[2]]
+[1] "2019-10-06"
+
+[[3]]
+[1] "W"
+```
+
+Corsi has been a key stat in the NHL over the last decade when looking at team possession. However, at the max and min values, Corsi is a split decision. When the Carolina Hurrincanes dominated at a 74.8% Corsi, they won while the defending team (Tampa Lightning - 25.2%) lost that game. However, when Carolina also put up a League best 74.1% as the Away team, they lost to the Columbus Blue Jackets - who only held a Corsi % of 25.9%. With these results, we cannot yet confirm the impact of corsi on the results.
+
+<b> Offensive Zone Start Percentage </b>
+
+```
+summary(df$Home_OFS)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  18.00   44.80   52.10   51.81   59.00   86.50 
+> home_grab(df$Home_OFS==86.5) #Home team LOST
+[[1]]
+[1] "Columbus Blue Jackets"
+
+[[2]]
+[1] "2018-02-18"
+
+[[3]]
+[1] "L"
+
+> 
+> summary(df$Away_OFS)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   13.9    42.6    49.4    49.8    56.9    82.8 
+> away_grab(df$Away_OFS==82.8) #Away team LOST
+[[1]]
+[1] "Nashville Predators"
+
+[[2]]
+[1] "2019-03-12"
+
+[[3]]
+[1] "W"
+
+> 
+> # Exploring Game stats - min OFS
+> home_grab(df$Home_OFS==18) #Home team WON
+[[1]]
+[1] "Anaheim Ducks"
+
+[[2]]
+[1] "2019-03-12"
+
+[[3]]
+[1] "W"
+
+> away_grab(df$Away_OFS==13.9) #Away team WO
+[[1]]
+[1] "Pittsburgh Penguins"
+
+[[2]]
+[1] "2018-02-18"
+
+[[3]]
+[1] "L"
+```
+
+Finally, I'll conclude this max-min comparison with the often overlooked Offensive Zone Start %. While we would expect this to have a positive impact on the outcome of a game, would this actually have a negative impact (crazy, I know, but run with me for a second)? The highest Offensize Zone start % on the last 3 years was 86.5% for any home team and 82.8% for any away team. The teams that put  up these numbers, the Columbus Blue Jackets and Nashville Predators, lost both of these games to the teams who put up the lowest Offensize Start %s over the last 3 years.
