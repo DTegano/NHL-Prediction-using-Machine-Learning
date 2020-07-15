@@ -220,5 +220,12 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	3624 obs. of  36 variables:
 
 ```
 
-As we can see....
+Some interesting observations/notes from the 3 seasons worth of data: <p><p/>
+1. Not all of the teams played the same amount of home and away games due to the quarantine stoppage.
+2. The highest amount of goals scored in a NHL game are 10 (home team) and 9 (away team)
+3. The highest corsi % we have seen in any game is 74.8%, while the highest amount of shooting % in any game is a whopping 41%.
+4. 87 Penalty minutes and 67 hits is the most we've seen in any game over the last 3 years.
+5. Neither the home or away team has recorded more than 33 blocked shots in a single game.
+
+
 
