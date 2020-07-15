@@ -227,5 +227,61 @@ Some interesting observations/notes from the 3 seasons worth of data: <p><p/>
 4. 87 Penalty minutes and 67 hits is the most we've seen in any game over the last 3 years.
 5. Neither the home or away team has recorded more than 33 blocked shots in a single game.
 
+Now, I'll look at a few different variables to see how much of an impact they have of the outcome of the game when the variable is maximized and minimized. I'll spoil goals for you - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals <u> almost </u> lost every game (I believe there were 1 or 2 shootout victories at 0-0).
+
+<b>Shots</b>
+
+```
+> summary(df$Home_S)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  13.00   28.00   32.00   32.27   37.00   58.00 
+> home_grab(df$Home_S==58) 
+[[1]]
+[1] "Washington Capitals"
+
+[[2]]
+[1] "2019-03-20"
+
+[[3]]
+[1] "L"
+
+> 
+> summary(df$Away_S)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  13.00   26.00   30.00   30.96   35.00   60.00 
+> away_grab(df$Away_S==60)
+[[1]]
+[1] "Carolina Hurricanes"
+
+[[2]]
+[1] "2017-11-02"
+
+[[3]]
+[1] "W"
+
+> home_grab(df$Home_S==13) 
+[[1]]
+[1] "Anaheim Ducks"      "New York Islanders"
+
+[[2]]
+[1] "2019-01-23" "2019-03-19"
+
+[[3]]
+[1] "L" "L"
+
+> away_grab(df$Away_S==13) 
+[[1]]
+[1] "Tampa Bay Lightning"
+
+[[2]]
+[1] "2019-10-06"
+
+[[3]]
+[1] "W"
+```
+
+
+Aside from goals, shots can be considered the next greatest factor that can influence the result of a game.
+
 
 
