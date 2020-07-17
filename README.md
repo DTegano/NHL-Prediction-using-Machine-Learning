@@ -524,3 +524,5 @@ Finally, I'll conclude this max-min comparison with the often overlooked Offensi
 # Analysis - Aggregated Data
 
 Here we are moving away from our raw data and to our aggregated data - which each game representing the team's average stats for each variable <i>prior</i> to that game being played.
+
+First, I'll start running a few different tests to compare the home and away data.
