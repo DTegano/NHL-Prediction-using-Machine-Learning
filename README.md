@@ -520,3 +520,7 @@ summary(df$Home_OFS)
 ```
 
 Finally, I'll conclude this max-min comparison with the often overlooked Offensive Zone Start %. While we would expect this to have a positive impact on the outcome of a game, would this actually have a negative impact (crazy, I know, but run with me for a second)? The highest Offensize Zone start % on the last 3 years was 86.5% for any home team and 82.8% for any away team. The teams that put  up these numbers, the Columbus Blue Jackets and Nashville Predators, lost both of these games to the teams who put up the lowest Offensize Start %s over the last 3 years.
+
+# Analysis - Aggregated Data
+
+Here we are moving away from our raw data and to our aggregated data - which each game representing the team's average stats for each variable <i>prior</i> to that game being played.
