@@ -623,16 +623,16 @@ data:  Away_Corsi
 W = 0.96966, p-value < 2.2e-16
 ```
 
-Very similiar to goals (and pretty much all of the other variables), we see that there is not a normal distribution with corsi data.
+Very similiar to goals (and pretty much all of the other variables), we see that there is not a normal distribution with corsi data. Now, I'll test for significance: 
 
 ```
 > cor(Home_Corsi, Away_Corsi)
 [1] -0.02187122
-> 
+
 > dt1 = dt[,c(8:9)]
-> 
+
 > dt1 = lapply(dt1, normalize)
-> 
+
 > t.test(dt1$Home_Corsi, dt1$Away_Corsi, paired = FALSE) 
 
 	Welch Two Sample t-test
@@ -648,3 +648,4 @@ mean of x mean of y
 0.5164798 0.4836585 
 ```
 
+I'll note here that the corsi should have a stronger correlation than what is showed. If one team dominates the corsi %, the other will have a much lower corsi% - which is why the negative relationship makes sense. However, I can reject the null hypothesis that there is no difference between the means of the home and away corsi.
