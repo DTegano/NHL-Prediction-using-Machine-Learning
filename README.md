@@ -227,7 +227,7 @@ Some interesting observations/notes from the 3 seasons worth of data: <p><p/>
 4. 87 Penalty minutes and 67 hits is the most we've seen in any game over the last 3 years.
 5. Neither the home or away team has recorded more than 33 blocked shots in a single game.
 
-Now, I'll look at a few different variables to see how much of an impact they have of the outcome of the game when the variable is maximized and minimized. I'll spoil goals for you - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals <u> almost </u> lost every game (I believe there were 1 or 2 shootout victories at 0-0).
+Now, I'll look at a few different variables to see how much of an impact they have of the outcome of the game when the variable is maximized and minimized. The trend that I'm expecting here is that when the variable is maximized, we'd expect to see wins and when the varaible is minimized, we'd expect losses. Take goals for example - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals <u> almost </u> lost every game (I believe there were 1 or 2 shootout victories at 0-0).
 
 For the following commands, I set up a quick function to return the name of the team, date, and result of the max-min value:
 
@@ -523,6 +523,71 @@ Finally, I'll conclude this max-min comparison with the often overlooked Offensi
 
 # Analysis - Aggregated Data
 
-Here we are moving away from our raw data and to our aggregated data - which each game representing the team's average stats for each variable <i>prior</i> to that game being played.
+Here we are moving away from our raw data to our aggregated data - which each game representing the team's average stats for each variable <i>prior</i> to that game being played. This is the same data I'll use for the rest of this repository and will predict games with.
 
-First, I'll start running a few different tests to compare the home and away data.
+To begin, I'll start running a few different tests to compare the home and away data. It's worth exploring since I want to know whether home ice has an advantage (or has a weight when it comes to predicting) - in data science terms, I want to see if there is a statistically significant difference between home and away variables.
+
+<b> Goals </b>
+
+The first command I'll run is to look at the distribution of the variables, followed by a shapiro test in order to confirm normality: 
+
+```
+hist(Home_Goals)
+abline(v = mean(Home_Goals), col = "blue")
+```
+<img src = "https://user-images.githubusercontent.com/39016197/87982251-c0b03c80-ca93-11ea-8d59-377a655b01a6.png" width = 430 height = 250>
+
+```
+hist(Away_Goals)
+abline(v = mean(Away_Goals), col = "blue")
+```
+<img src = "https://user-images.githubusercontent.com/39016197/87982343-ea696380-ca93-11ea-8a17-bfadf75f47f4.png" width = 430 height = 250>
+
+```
+> shapiro.test(Home_Goals)
+
+	Shapiro-Wilk normality test
+
+data:  Home_Goals
+W = 0.90674, p-value < 2.2e-16
+
+> shapiro.test(Away_Goals)
+
+	Shapiro-Wilk normality test
+
+data:  Away_Goals
+W = 0.94241, p-value < 2.2e-16
+```
+
+As we can see from the above graphs, the goal variable doesn't have a normal distribution - as the data doesn't have that bell shape spread away from the mean. This is also confirmed with the shapiro test, which our null hypothesis would be that the data is normally distributed. With the p-values at the lowest possible value in R (2.2 x e^-16), we can easily reject the null hypthoesis that goal data is normally distributed.
+
+I'll also run a quick correlation test to make sure there isn't a strong correlation between the two variables. To test if there is a statistical significant difference between the home and away goals, I'll run a T-test to make sure the means between the two variables are statistically different. However, in order to do this, one of the T-test assumptions is that both variables already have a normal distribution. Below is my function to normalize this data, as well as the other R commands:
+
+```
+# Normalize Function
+normalize = function(x) {
+     (x-min(x))/(max(x) - min(x))
+ }
+ 
+> cor(Home_Goals, Away_Goals)
+[1] 0.0285731
+
+> dt1 = dt[,c(2:3)]
+> dt1 = lapply(dt1, normalize)
+> t.test(dt1$Home_Goals, dt1$Away_Goals, paired = FALSE)
+
+	Welch Two Sample t-test
+
+data:  dt1$Home_Goals and dt1$Away_Goals
+t = -73.427, df = 6956.7, p-value < 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.10351067 -0.09812745
+sample estimates:
+mean of x mean of y 
+0.2995634 0.4003824 
+```
+
+Based on the p-value of the T-test, we can reject the null hypothesis that there is no difference in the means between home and away goals. There is a statistical significant different between the two variables. I'll also note that the T-test was not paired since the data comes from different participants.
+
+
