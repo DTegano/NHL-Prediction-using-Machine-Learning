@@ -591,3 +591,60 @@ mean of x mean of y
 Based on the p-value of the T-test, we can reject the null hypothesis that there is no difference in the means between home and away goals. There is a statistical significant different between the two variables. I'll also note that the T-test was not paired since the data comes from different participants.
 
 
+<b> Corsi </b>
+
+Next, I'll do the same commands as I did with goals but with Corsi. Looking ahead at correlations for the Result variable, you'll understand why this variable was chosen to be looked at.
+
+```
+hist(Home_Corsi)
+abline(v = mean(Home_Corsi), col = "blue")
+```
+<img src = "https://user-images.githubusercontent.com/39016197/87985992-c1e46800-ca99-11ea-9b7e-845fd48393c0.png" width = 430 height = 250>
+
+```
+hist((Away_Corsi))
+abline(v = mean(Away_Corsi), col = "blue")
+```
+<img src = "https://user-images.githubusercontent.com/39016197/87986182-fc4e0500-ca99-11ea-8819-7aefb549e811.png" width = 430 height = 250>
+
+```
+shapiro.test(Home_Corsi)
+
+	Shapiro-Wilk normality test
+
+data:  Home_Corsi
+W = 0.97762, p-value < 2.2e-16
+
+shapiro.test(Away_Corsi)
+
+	Shapiro-Wilk normality test
+
+data:  Away_Corsi
+W = 0.96966, p-value < 2.2e-16
+```
+
+Very similiar to goals (and pretty much all of the other variables), we see that there is not a normal distribution with corsi data.
+
+```
+> cor(Home_Corsi, Away_Corsi)
+[1] -0.02187122
+> 
+> dt1 = dt[,c(8:9)]
+> 
+> dt1 = lapply(dt1, normalize)
+> 
+> t.test(dt1$Home_Corsi, dt1$Away_Corsi, paired = FALSE) 
+
+	Welch Two Sample t-test
+
+data:  dt1$Home_Corsi and dt1$Away_Corsi
+t = 17.975, df = 7345.5, p-value <
+2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.02924196 0.03640055
+sample estimates:
+mean of x mean of y 
+0.5164798 0.4836585 
+```
+
