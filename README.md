@@ -648,12 +648,35 @@ mean of x mean of y
 0.5164798 0.4836585 
 ```
 
-I'll note here that the corsi should have a stronger correlation than what is showed. If one team dominates the corsi %, the other will have a much lower corsi% - which is why the negative relationship makes sense. However, I can reject the null hypothesis that there is no difference between the means of the home and away corsi.
+I'll note here that if one team dominates the corsi %, the other will have a much lower corsi% - which is why the negative relationship makes sense.  I can reject the null hypothesis that there is no difference between the means of the home and away corsi.
+
+To wrap up this section, I'll if confirm that the home and away variables are completely independent of each other (as they should be, based on how the data was manipulated) by running a chi-square tests. I'll also run a chi-square test on our Results variable:
+
+```
+> chisq.test(table(dt[,c("Result", "Home_Goals")]))
+
+	Pearson's Chi-squared test
+
+data:  table(dt[, c("Result", "Home_Goals")])
+X-squared = 1146.2, df = 1118, p-value = 0.2723
+
+> chisq.test(table(dt[,c("Home_Goals", "Away_Goals")]))
+
+	Pearson's Chi-squared test
+
+data:  table(dt[, c("Home_Goals", "Away_Goals")])
+X-squared = 1355962, df = 1243216, p-value < 2.2e-16
+```
+
+To interpret the above, I have to note that there are two null hyptheses above. Let's recall that the null hypothesis is the accepted hypothesis. For Results and home goals, it is accepted that the two variables are dependent on each other. Since the p-value is very high, we fail to reject that null hypotheis. It gets more interesting when we look at the home and away variables. The way the data is manipulated, it should be accepted that the home and away team stats are independent of each other and that should be my null hypothesis in that sense; this makes sense since there should be no relationship between the two. However, that's not how the model sees it. Since the p-value is at its' absolute minimum value, I would have no choice but to reject this notion that there is no relationship. While I know that's not the case here, I'll give the test the benefit of the doubt and say there should be some relationship between the two stats - since eventually, the two teams would have to play each other and each team's averaged stats would have to impact each other somehow.
+
+
 
 # Correlations and Regressions
 
 Before I get to the machine learning aspect of my project, I want look at the variable correlations as well as running regressions on a few different variables. First, I want to run a correlation command that will show me the strongest positive and negative correlations on my predictor variable - Results. Since my Results variable is currently as factor in my data set, I'll first copy the data frame and create a numeric, binary variable to represent a "win" in an game's outcome:
 
+<b> Results </b>
 ```
 > dt1 = dt
 
@@ -715,3 +738,34 @@ Away_Corsi_A   Away_OFS_A    Home_BS_A      Home_BS
 ```
 
 Let's take a moment to digest this information. With the amount of variables and factors that go into a hockey game, it doesn't necessarily surprise me that the strongest correlation of a game result is only .0838, but I was hoping for a variable to at least hit 0.10. When we look at the positive variables that affect the outcome, the top variables are the Home team's Corsi %, season differential (+/- based on goals scored and goals against), points, wins, and how bad the other team's defensive/goaltending is. I'll note that the classic favorite variables, goals and shots, are no where near the top correlation variables for the home team. In fact, when we look at correlation strength alone (abs_cor, which ignores the positive or negative relationship), home_goals is ranked 21st while shots for both home and away teams fall even further. However, according to correlation strength, the average goals scored by the away team is much more important. Perhaps this is due to good team's ability to win away from home ice, or that home ice is such an advantage that it doesn't matter if a high scoring or a low scoring team is the home team - both are valid points in my opinion. So based on correlation strength alone, the outcome of a game depends on the away team and how they fare based on average point, differential, win, goals, and corsi per game - which, I'll interpret as a team's ability to take away the home ice advantage from their opponent. Surprisngly, the away team's offensive zone start % is a high enough correlation to be near the top, but after my previous analysis with the min-max values, it'll be interesting to see how much of a factor this will really have. Despite that same min-max analysis where corsi had a mixed result, this appears to be the top variable for both the home and away team. I'll also pay a bit more attention to the points, differential, and win variables for the remainder of this project - but it is no surprise that there variables are among top correlations (good teams win, put up points, and will usually have a positive differential).
+
+<b> Away Poins </b>
+
+Since this was the strongest correlation to the outcome of a game, we'll start looking at correlations with this variable - as well as a regresion.
+
+```
+head(away_points_cor)
+
+  Home_DIF   Home_PDO     Home_P     Home_W Home_Goals 
+ 1.0000000  0.8593444  0.8580106  0.7965284  0.7469333 
+   Home_SH 
+ 0.6835826 
+ ```
+ 
+This is where these correlation results doesn't quite make sense. The top variables that have the strongest correlation with the average away points are the home team's PDO, points, wins, goals and shooting percentage - which, have nothing to do with the opposing team's points average. I guess I'm not surprised here, since the chi-square tests above thinks that home and away stats have a relationship, but this is just flat out wrong.  I don't start to see any away variables until I get into the top 15 (top 25 shown for additional away variables). In this case, the top away variables would be save %, differential, PDO, PIM, and blocked shots.
+ 
+ ```
+head(away_points_cor, n= 25L)
+
+     Home_DIF      Home_PDO        Home_P        Home_W    Home_Goals 
+ 1.000000e+00  8.593444e-01  8.580106e-01  7.965284e-01  7.469333e-01 
+      Home_SH       Home_SV       Home_EN    Home_Corsi    Home_Shots 
+ 6.835826e-01  5.982487e-01  3.687187e-01  1.712608e-01  1.695435e-01 
+   Home_PIM_A     Home_HT_A     Home_BS_A      Home_OFS       Away_SV 
+ 1.331332e-01  1.181475e-01  5.826288e-02  5.422902e-02  1.742194e-02 
+      Home_BS      Away_DIF      Away_PDO      Away_PIM       Away_BS 
+ 1.349992e-02  1.000112e-02  6.271051e-03  5.944267e-03  5.177181e-03 
+    Away_BS_A       Away_SA    Away_PIM_A       Away_HT    Away_Goals 
+ 5.132681e-03  3.900925e-03  3.230196e-03  2.442725e-03 -9.518124e-05 
+ ```
+
