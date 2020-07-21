@@ -649,3 +649,69 @@ mean of x mean of y
 ```
 
 I'll note here that the corsi should have a stronger correlation than what is showed. If one team dominates the corsi %, the other will have a much lower corsi% - which is why the negative relationship makes sense. However, I can reject the null hypothesis that there is no difference between the means of the home and away corsi.
+
+# Correlations and Regressions
+
+Before I get to the machine learning aspect of my project, I want look at the variable correlations as well as running regressions on a few different variables. First, I want to run a correlation command that will show me the strongest positive and negative correlations on my predictor variable - Results. Since my Results variable is currently as factor in my data set, I'll first copy the data frame and create a numeric, binary variable to represent a "win" in an game's outcome:
+
+```
+> dt1 = dt
+
+> attach(dt1)
+
+> dt1$target = ifelse(dt1$Result=="W", 1,0)
+
+> numeric_columns = setdiff(names(dt1), 'Result')
+
+> target_cor = cor(dt1[,numeric_columns])['target',]
+
+> target_cor =  target_cor[order(target_cor, decreasing = TRUE)]
+
+> head(target_cor)
+
+    target Home_Corsi   Home_DIF     Home_P     Home_W 
+1.00000000 0.06400173 0.05612663 0.05371894 0.04817111 
+   Away_GA 
+0.04458491 
+
+> tail(target_cor)
+
+   Away_OFS  Away_Corsi  Away_Goals      Away_W 
+-0.05758304 -0.06531523 -0.07366870 -0.07451280 
+   Away_DIF      Away_P 
+-0.07481934 -0.08382848 
+
+# Absolute Value for correlation strength only
+
+> abs_cor =  abs(cor(dt1[,numeric_columns])['target',])
+
+> abs_cor =  abs_cor[order(abs_cor, decreasing = TRUE)]
+
+> abs_cor
+      target       Away_P     Away_DIF       Away_W 
+ 1.000000000  0.083828483  0.074819337  0.074512798 
+  Away_Goals   Away_Corsi   Home_Corsi     Away_OFS 
+ 0.073668700  0.065315229  0.064001728  0.057583035 
+     Home_GA     Home_DIF      Away_SH       Home_P 
+ 0.056858792  0.056126633  0.054837159  0.053718941 
+     Home_SA     Away_PDO       Home_W      Away_GA 
+ 0.052310661  0.048523831  0.048171108  0.044584913 
+   Away_BS_A      Home_EN      Away_BS      Away_SA 
+ 0.042659400  0.039949709  0.037266626  0.035835527 
+  Home_Goals   Home_Shots Home_Corsi_A      Home_SV 
+ 0.034851479  0.033865106  0.033164523  0.032130353 
+    Home_PDO     Home_OFS    Away_EN_A   Away_Shots 
+ 0.031452668  0.029883373  0.029563092  0.026827002 
+Away_Corsi_A   Away_OFS_A    Home_BS_A      Home_BS 
+ 0.025997852  0.023825416  0.023398096  0.022219481 
+  Home_OFS_A      Away_SV   Away_PIM_A     Home_PIM 
+ 0.019505274  0.018930211  0.016135687  0.015297126 
+     Away_EN      Home_SH   Home_PIM_A     Away_PIM 
+ 0.013809102  0.013698184  0.012456492  0.012252871 
+   Home_EN_A    Away_HT_A    Home_HT_A      Away_HT 
+ 0.011148183  0.006317129  0.005281937  0.003529820 
+     Home_HT 
+ 0.003073305 
+```
+
+Let's take a moment to digest this information. With the amount of variables and factors that go into a hockey game, 
