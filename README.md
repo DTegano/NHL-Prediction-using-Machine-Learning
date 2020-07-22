@@ -1001,3 +1001,90 @@ Finally, you can see that a high save % is usually found at the higher end of po
 [1] 819
 ```
 # Predicting
+
+Finally, the section you've been waiting for! Is it possible to reasonably predict NHL games based on the data I've collected? Well, we're about to find out! First, I'll beging with a basic logistic regression - I'll note that I  don't have high hopes for a good accuracy on this model. I'll then look at some of the more complex models, such as SVM and ANN, to try to get my accuracy as high as possibe. 
+
+# Logistic Regression 
+
+I'll recall from the above that I'm using "Dtrain" as my training set and "Dtest" for my testing set. For a logistic regression, there's a few assumptions I'll need to familiarize myself with:
+
+1. There needs to be a linear relationship between the logit of the outcome and each predictor variables.
+2. There should not be any outliers in any continuous variables
+3. No high multicollinearity among the predictor variables
+
+I already know that there is high multicollinearity among some of these variables (take PDO for example, which is the direct calculation of save % and shooting %), so I'll need to make sure that some of these variables are removed. However, before I get to that step, I'll first run a logistic regression with how my data currently is:
+
+```
+> attach(dtrain)
+
+> logistic = glm(Result ~ ., data = dtrain, family = "binomial")
+
+> summary(logistic)
+
+Call:
+glm(formula = Result ~ ., family = "binomial", data = dtrain)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.5712  -1.2021   0.8712   1.0801   2.1024  
+
+Coefficients:
+               Estimate Std. Error z value Pr(>|z|)   
+(Intercept)   -2.209040  28.895598  -0.076  0.93906   
+Home_Goals     1.835300   0.800152   2.294  0.02181 * 
+Away_Goals     0.011210   0.736458   0.015  0.98786   
+Home_PIM       0.069016   0.033449   2.063  0.03908 * 
+Away_PIM      -0.086199   0.036179  -2.383  0.01719 * 
+Home_Shots    -0.128591   0.071666  -1.794  0.07276 . 
+Away_Shots     0.172258   0.052614   3.274  0.00106 **
+Home_Corsi     0.275448   0.185829   1.482  0.13827   
+Away_Corsi    -0.058952   0.199119  -0.296  0.76718   
+Home_OFS      -0.144572   0.168812  -0.856  0.39177   
+Away_OFS      -0.126106   0.173015  -0.729  0.46608   
+Home_HT        0.012384   0.015618   0.793  0.42782   
+Away_HT       -0.021243   0.015791  -1.345  0.17854   
+Home_BS        0.065205   0.050873   1.282  0.19994   
+Away_BS       -0.068005   0.048713  -1.396  0.16271   
+Home_EN        1.191431   0.549968   2.166  0.03028 * 
+Away_EN        0.190133   0.505907   0.376  0.70705   
+Home_GA       -1.398821   0.825524  -1.694  0.09018 . 
+Away_GA       -0.320881   0.761943  -0.421  0.67366   
+Home_PIM_A    -0.031708   0.038698  -0.819  0.41257   
+Away_PIM_A     0.083368   0.043394   1.921  0.05471 . 
+Home_SA        0.060267   0.080031   0.753  0.45142   
+Away_SA       -0.067543   0.058373  -1.157  0.24723   
+Home_Corsi_A   0.080533   0.170865   0.471  0.63741   
+Away_Corsi_A   0.137977   0.184159   0.749  0.45372   
+Home_OFS_A    -0.115216   0.168394  -0.684  0.49385   
+Away_OFS_A    -0.100760   0.173810  -0.580  0.56211   
+Home_HT_A     -0.004641   0.017868  -0.260  0.79505   
+Away_HT_A      0.029602   0.017699   1.672  0.09443 . 
+Home_BS_A     -0.043187   0.044698  -0.966  0.33394   
+Away_BS_A      0.031780   0.041716   0.762  0.44617   
+Home_EN_A      0.443807   0.767816   0.578  0.56326   
+Away_EN_A     -0.409631   0.638851  -0.641  0.52139   
+Home_W         0.099034   1.088459   0.091  0.92750   
+Away_W         0.320636   1.055531   0.304  0.76130   
+Home_P        -0.145406   0.631942  -0.230  0.81802   
+Away_P        -0.426628   0.637420  -0.669  0.50330   
+Home_DIF      -1.163728   0.791786  -1.470  0.14163   
+Away_DIF      -0.538459   0.707696  -0.761  0.44674   
+Home_SV      -39.613386  64.559139  -0.614  0.53948   
+Away_SV      -71.785119  67.764179  -1.059  0.28945   
+Home_SH      -53.930775  65.732908  -0.820  0.41196   
+Away_SH      -70.194137  67.897705  -1.034  0.30122   
+Home_PDO      39.485752  65.455078   0.603  0.54634   
+Away_PDO      76.743247  68.065464   1.127  0.25953   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 3571.1  on 2593  degrees of freedom
+Residual deviance: 3464.7  on 2549  degrees of freedom
+AIC: 3554.7
+
+Number of Fisher Scoring iterations: 5
+```
+
+Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change - I should repeat this process until my model only includes statistically significant variables.
