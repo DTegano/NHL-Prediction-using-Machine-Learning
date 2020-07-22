@@ -984,3 +984,20 @@ dt_away %>%
     ggplot(aes(x = Away_W, y = Away_P, color = High_Save)) + geom_point() + labs(x = "Average Win Rate", y = "Average Points per Game", title = "Above Average Saves") +   geom_smooth(method = "lm")
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/88235330-e118fc00-cc37-11ea-95ab-b6ded30a78da.png" width = 510 height = 350>
+
+Finally, you can see that a high save % is usually found at the higher end of points per game (despite the negative correlation) and average win per game. I'll note that the linear regression fit line has a steeper slope for the save % values below the mean - which does *not* mean that winning with a lower save %, ov average, results in more points on average. The regression line is simply a best fitting line based on the data - which can be skewed from the few outliers that we see in the plot. In fact, if we look back at the raw data, we'll see that a higher save % certainly results in more points: 
+
+```
+> sum(dt$Home_P[dt$Home_SV>mean(dt$Home_SV)])
+[1] 3200
+
+> sum(dt$Home_P[dt$Home_SV<mean(dt$Home_SV)])
+[1] 1160
+
+> sum(dt$Away_P[dt$Away_SV>mean(dt$Away_SV)])
+[1] 2886
+
+> sum(dt$Away_P[dt$Away_SV<mean(dt$Away_SV)])
+[1] 819
+```
+# Predicting
