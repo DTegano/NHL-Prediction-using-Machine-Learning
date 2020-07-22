@@ -859,7 +859,6 @@ F-statistic: 1.365e+04 on 2 and 3673 DF,  p-value: < 2.2e-16
 
 <img src = "https://user-images.githubusercontent.com/39016197/88122490-fb929d00-cb85-11ea-8b02-0c53d69ded02.png" width = 410 height = 250>
 <img src = "https://user-images.githubusercontent.com/39016197/88122511-0f3e0380-cb86-11ea-9ba5-1b90c641f3c6.png" width = 410 height = 250>
-
 According to the regression model, a one unit increase in wins increasing points by (1.0769) and a one unit increase in differential increases points by 0.14. It's good to see both variables having a positive relationship with points, and both make sense.
 
 Finally, when we look at the differential and win rate together in a plot, it makes sense that there would be a correlation with the points variable:
@@ -872,3 +871,116 @@ dt_away %>%
     labs(x = "Average Win Rate", y = "Average Differential", title = "Above Average Points")
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/88123138-7f00be00-cb87-11ea-9928-53dd307fbece.png" width = 510 height = 350>
+
+<b> Away Save % </b>
+
+To wrap up this section, I'll run the same commands as points, but for save %.
+
+```
+> away_save_cor = cor(dt_away[, unlist(lapply(dt_away, is.numeric))])
+
+> away_save_cor = away_save_cor[,20]
+
+> away_save_cor = away_save_cor[order(away_save_cor, decreasing = TRUE)]
+
+> head(away_save_cor)
+
+  Away_SV  Away_PDO  Away_DIF    Away_P    Away_W 
+1.0000000 0.7452563 0.6512525 0.5767216 0.5394995 
+  Away_SA 
+0.2715680 
+
+> tail(away_save_cor)
+
+  Away_BS_A  Away_Shots   Away_EN_A    Away_OFS 
+-0.04996938 -0.17028450 -0.17593604 -0.19558513 
+ Away_Corsi     Away_GA 
+-0.26007001 -0.85985466 
+```
+
+I'll note that the strongest correlation here is the negative relation with goals against - which makes complete sense. PDO doesn't surprise me since save % is part of that calculation, differential is related since a save % is more likely to have a positive differential, points and wins are also straight forward. I'm surprised that shots against didn't have a stronger corrlation, but I'm even more surprised that there isn't a strong correlation with blocked shots. Blocked shots can prevent goals, but also prevents shots on goal that would count toward a save, so I guess the lower correlation (0.169) isn't all that far off.
+
+For my regression, I'll include the strong correlation variables and will also initally include blocked shots:
+
+```
+> model = lm(Away_SV ~ Away_PDO + Away_P + Away_W + Away_SA + Away_GA + Away_BS)
+
+> summary(model)
+
+Call:
+lm(formula = Away_SV ~ Away_PDO + Away_P + Away_W + Away_SA + 
+    Away_GA + Away_BS)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.081196 -0.001026  0.000082  0.001327  0.019322 
+
+Coefficients:
+              Estimate Std. Error  t value
+(Intercept)  8.266e-01  3.996e-03  206.868
+Away_PDO     9.629e-02  4.540e-03   21.207
+Away_P      -1.259e-02  5.595e-04  -22.504
+Away_W       9.536e-03  8.889e-04   10.728
+Away_SA      2.602e-03  3.182e-05   81.760
+Away_GA     -2.900e-02  1.705e-04 -170.123
+Away_BS     -4.511e-06  3.827e-05   -0.118
+            Pr(>|t|)    
+(Intercept)   <2e-16 ***
+Away_PDO      <2e-16 ***
+Away_P        <2e-16 ***
+Away_W        <2e-16 ***
+Away_SA       <2e-16 ***
+Away_GA       <2e-16 ***
+Away_BS        0.906    
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.003267 on 3669 degrees of freedom
+Multiple R-squared:  0.9502,	Adjusted R-squared:  0.9501 
+F-statistic: 1.167e+04 on 6 and 3669 DF,  p-value: < 2.2e-16
+
+> model = lm(Away_SV ~ Away_PDO + Away_P + Away_W + Away_SA + Away_GA)
+
+> summary(model)
+
+Call:
+lm(formula = Away_SV ~ Away_PDO + Away_P + Away_W + Away_SA + 
+    Away_GA)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.081214 -0.001026  0.000085  0.001325  0.019315 
+
+Coefficients:
+              Estimate Std. Error t value
+(Intercept)  8.266e-01  3.992e-03  207.06
+Away_PDO     9.622e-02  4.504e-03   21.36
+Away_P      -1.259e-02  5.581e-04  -22.55
+Away_W       9.537e-03  8.888e-04   10.73
+Away_SA      2.601e-03  3.122e-05   83.31
+Away_GA     -2.900e-02  1.704e-04 -170.23
+            Pr(>|t|)    
+(Intercept)   <2e-16 ***
+Away_PDO      <2e-16 ***
+Away_P        <2e-16 ***
+Away_W        <2e-16 ***
+Away_SA       <2e-16 ***
+Away_GA       <2e-16 ***
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.003266 on 3670 degrees of freedom
+Multiple R-squared:  0.9502,	Adjusted R-squared:  0.9501 
+F-statistic: 1.401e+04 on 5 and 3670 DF,  p-value: < 2.2e-16
+```
+
+Well, that didn't last long. Blocked shots had an enormous p-value, and did not have any statistically significant weight compared to the other stats. While Goals against isn't surprising when looking at the negative relationships, I am shocked that points has a negative relationship. For every one unit increase in points, save % is expected to drop by 0.01259 - which isn't a big change, but still interesting to see. You would expect to see good goaltending save % that results in more points.
+
+```
+dt_away %>%
+    mutate(High_Save = ifelse(Away_SV > mean(Away_SV), "Yes", "No")) %>%
+    ggplot(aes(x = Away_W, y = Away_P, color = High_Save)) + geom_point() + labs(x = "Average Win Rate", y = "Average Points per Game", title = "Above Average Saves") +   geom_smooth(method = "lm")
+```
+<img src = "https://user-images.githubusercontent.com/39016197/88235330-e118fc00-cc37-11ea-95ab-b6ded30a78da.png" width = 510 height = 350>
