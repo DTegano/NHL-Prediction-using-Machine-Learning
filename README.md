@@ -1087,4 +1087,4 @@ AIC: 3554.7
 Number of Fisher Scoring iterations: 5
 ```
 
-Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change - I should repeat this process until my model only includes statistically significant variables.
+The family needs to be binomial since I'm predicting a categorical variable with only 2 options. Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change - I should repeat this process until my model only includes statistically significant variables.
