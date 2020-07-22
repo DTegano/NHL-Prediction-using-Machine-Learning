@@ -744,18 +744,15 @@ Let's take a moment to digest this information. With the amount of variables and
 Since this was the strongest correlation to the outcome of a game, we'll start looking at correlations with this variable - as well as a regresion.
 
 ```
-head(away_points_cor)
+> head(away_points_cor)
 
   Home_DIF   Home_PDO     Home_P     Home_W Home_Goals 
  1.0000000  0.8593444  0.8580106  0.7965284  0.7469333 
    Home_SH 
  0.6835826 
- ```
  
-This is where these correlation results doesn't quite make sense. The top variables that have the strongest correlation with the average away points are the home team's PDO, points, wins, goals and shooting percentage - which, have nothing to do with the opposing team's points average. I guess I'm not surprised here, since the chi-square tests above thinks that home and away stats have a relationship, but this is just flat out wrong.  I don't start to see any away variables until I get into the top 15 (top 25 shown for additional away variables). In this case, the top away variables would be save %, differential, PDO, PIM, and blocked shots.
  
- ```
-head(away_points_cor, n= 25L)
+ > head(away_points_cor, n= 25L)
 
      Home_DIF      Home_PDO        Home_P        Home_W    Home_Goals 
  1.000000e+00  8.593444e-01  8.580106e-01  7.965284e-01  7.469333e-01 
@@ -768,4 +765,110 @@ head(away_points_cor, n= 25L)
     Away_BS_A       Away_SA    Away_PIM_A       Away_HT    Away_Goals 
  5.132681e-03  3.900925e-03  3.230196e-03  2.442725e-03 -9.518124e-05 
  ```
+ 
+This is where these correlation results doesn't quite make sense. The top variables that have the strongest correlation with the average away points are the home team's PDO, points, wins, goals and shooting percentage - which, have nothing to do with the opposing team's points average. I guess I'm not surprised here, since the chi-square tests above thinks that home and away stats have a relationship, but this is just flat out wrong.  I don't start to see any away variables until I get into the top 15 (top 25 shown for additional away variables). In this case, the top away variables would be save %, differential, PDO, PIM, and blocked shots. Since I know these results are not correct, I'm going to use my clone data frame to include *only* the away variables:
+ 
+ ```
+dt_away = dt[, -1]
+dt_away= dt_away[, rep(c(FALSE, TRUE), 22)]
 
+away_points_cor = cor(dt_away[, unlist(lapply(dt_away, is.numeric))])
+away_points_cor = away_points_cor[,18]
+away_points_cor = away_points_cor[order(away_points_cor, decreasing = TRUE)]
+
+head(away_points_cor)
+
+    Away_P     Away_W   Away_DIF   Away_PDO Away_Goals    Away_SH 
+ 1.0000000  0.9122581  0.8692082  0.7610000  0.6687041  0.6053759 
+ 
+ ```
+I'll note that I had to remove the "Results" variable since I needed an even 44 columns to run the above command. Looking at the new results, this makes much, much more sense. Winning games obviously has a strong correlation with points. Differential usually tells a story - positive teams are usually winning more, however, does this stat does often get inflated by winning games by a lot of goals, but losing more games by few goals.
+
+Next, we'll look at the regression model:
+
+```
+> model = lm(Away_P ~ Away_W + Away_DIF + Away_PDO + Away_SH)
+
+> summary(model)
+
+Call:
+lm(formula = Away_P ~ Away_W + Away_DIF + Away_PDO + Away_SH)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.63698 -0.03295 -0.00558  0.02490  1.41566 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)  0.36244    0.14181   2.556   0.0106
+Away_W       1.07412    0.01726  62.246   <2e-16
+Away_DIF     0.13149    0.00487  26.999   <2e-16
+Away_PDO     0.19622    0.14951   1.312   0.1894
+Away_SH      0.24698    0.15433   1.600   0.1096
+               
+(Intercept) *  
+Away_W      ***
+Away_DIF    ***
+Away_PDO       
+Away_SH        
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.09116 on 3671 degrees of freedom
+Multiple R-squared:  0.8818,	Adjusted R-squared:  0.8816 
+F-statistic:  6844 on 4 and 3671 DF,  p-value: < 2.2e-16
+```
+
+Since PDO and shooting percentage is not signifant, I'll go ahead and run the model without those variables:
+
+```
+> model = lm(Away_P ~ Away_W + Away_DIF)
+
+> summary(model)
+
+Call:
+lm(formula = Away_P ~ Away_W + Away_DIF)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.64154 -0.03316 -0.00537  0.02462  1.41843 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept) 0.581568   0.008643   67.28   <2e-16
+Away_W      1.076995   0.017246   62.45   <2e-16
+Away_DIF    0.140425   0.003597   39.04   <2e-16
+               
+(Intercept) ***
+Away_W      ***
+Away_DIF    ***
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.09126 on 3673 degrees of freedom
+Multiple R-squared:  0.8814,	Adjusted R-squared:  0.8814 
+F-statistic: 1.365e+04 on 2 and 3673 DF,  p-value: < 2.2e-16
+
+
+> plot(Away_P ~ Away_W + Away_DIF)
+
+> abline(model, col = "red")
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/88122490-fb929d00-cb85-11ea-8b02-0c53d69ded02.png" width = 410 height = 250>
+<img src = "https://user-images.githubusercontent.com/39016197/88122511-0f3e0380-cb86-11ea-9ba5-1b90c641f3c6.png" width = 410 height = 250>
+
+According to the regression model, a one unit increase in wins increasing points by (1.0769) and a one unit increase in differential increases points by 0.14. It's good to see both variables having a positive relationship with points, and both make sense.
+
+Finally, when we look at the differential and win rate together in a plot, it makes sense that there would be a correlation with the points variable:
+
+```
+dt_away %>%
+    mutate(High_Points = ifelse(Away_P > mean(Away_P), "Yes", "No")) %>%
+    ggplot(aes(x = Away_W, y = Away_DIF, color = High_Points)) + 
+    geom_point() + 
+    labs(x = "Average Win Rate", y = "Average Differential", title = "Above Average Points")
+```
+<img src = "https://user-images.githubusercontent.com/39016197/88123138-7f00be00-cb87-11ea-9928-53dd307fbece.png" width = 510 height = 350>
