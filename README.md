@@ -1196,4 +1196,123 @@ Number of Fisher Scoring iterations: 4
 
 Let's look at the above model. My first impression is that the goal coefficients are correct - home team goals increase the log odds (since the result is based on the home team) while away goals hurt the chances of a home win. While away goals was not statistically significant when every variable was included, it is now significant since there are only 2 variables included in this model. Once the model was run, I first looked at the recall - which is a whopping 91.68% when we look at the number of "W"s predicted correctly! Of course, having a high recall for "W"s means that I have an extremely low recall for "L" (about 9.7%).  When looking at the precision of "W"s, it was only 53.7%. When looking at the whole accuracy for the model, I only was able to correctly predict 53.42% (I can guess games much better than that rate).
 
-<b> Next </b>
+<b> Best Possible Model? </b>
+
+After experimenting with what variables I think should be in the regression and what variables should not be, I believe I came up with the best possible model with the data I have. I'll note that most of the core stats was able to stay in the model - which includes goals, shots, corsi, hits, blocked shots, differential, wins, points, save %, and shooting %. The surpirse variables that also stayed include empty net goals and penalty minutes - which makes me glad that I was able to decipher out the empty net goals with my web scraper and create a separate column. PDO, which is save % + shooting %, was able to stay in the model as long as it could - but ultimately, it was the last variable removed to get the best accuracy possible. I'll also note that all of my "against" variables, such as goals against, shots against, didn't have much weight in the logistic regresion, but I'm still hoping these will come in handy when I move on to the SVM and ANN models. 
+
+Here is the best logistic model I can create with this data set: 
+
+```
+> summary(logistic)
+
+Call:
+glm(formula = Result ~ Home_Goals + Away_Goals + Home_Shots + 
+    Away_Shots + Home_PIM + Away_PIM + Home_Corsi + Away_Corsi + 
+    Home_HT + Away_HT + Home_EN + Away_EN + Home_BS + Away_BS + 
+    Home_SH + Away_SH + Home_DIF + Away_DIF + Home_W + Away_W + 
+    Home_P + Away_P + Home_SV + Away_SV, family = "binomial", 
+    data = dtrain)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.5132  -1.2169   0.9001   1.0820   1.8356  
+
+Coefficients:
+              Estimate Std. Error z value
+(Intercept)  -2.697449  14.403414  -0.187
+Home_Goals    0.929243   0.480477   1.934
+Away_Goals   -0.463775   0.410064  -1.131
+Home_Shots   -0.125061   0.053002  -2.360
+Away_Shots    0.123895   0.044644   2.775
+Home_PIM      0.051619   0.023720   2.176
+Away_PIM     -0.045629   0.023459  -1.945
+Home_Corsi    0.117232   0.036860   3.180
+Away_Corsi   -0.139971   0.037718  -3.711
+Home_HT       0.013684   0.013517   1.012
+Away_HT      -0.008546   0.013307  -0.642
+Home_EN       1.136173   0.508977   2.232
+Away_EN       0.287071   0.458700   0.626
+Home_BS       0.027398   0.039117   0.700
+Away_BS      -0.027131   0.037710  -0.719
+Home_SH     -18.518776  16.703249  -1.109
+Away_SH       1.874765  12.043321   0.156
+Home_DIF     -0.212497   0.259394  -0.819
+Away_DIF      0.218623   0.273273   0.800
+Home_W       -0.329124   0.707424  -0.465
+Away_W        0.332814   0.790311   0.421
+Home_P        0.285682   0.452774   0.631
+Away_P       -0.570194   0.497623  -1.146
+Home_SV      11.854076   8.466455   1.400
+Away_SV      -7.250930   8.395518  -0.864
+            Pr(>|z|)    
+(Intercept) 0.851442    
+Home_Goals  0.053113 .  
+Away_Goals  0.258062    
+Home_Shots  0.018297 *  
+Away_Shots  0.005517 ** 
+Home_PIM    0.029541 *  
+Away_PIM    0.051763 .  
+Home_Corsi  0.001471 ** 
+Away_Corsi  0.000206 ***
+Home_HT     0.311390    
+Away_HT     0.520734    
+Home_EN     0.025597 *  
+Away_EN     0.531423    
+Home_BS     0.483678    
+Away_BS     0.471857    
+Home_SH     0.267563    
+Away_SH     0.876294    
+Home_DIF    0.412668    
+Away_DIF    0.423701    
+Home_W      0.641757    
+Away_W      0.673669    
+Home_P      0.528067    
+Away_P      0.251864    
+Home_SV     0.161477    
+Away_SV     0.387771    
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 3571.1  on 2593  degrees of freedom
+Residual deviance: 3490.1  on 2569  degrees of freedom
+AIC: 3540.1
+
+Number of Fisher Scoring iterations: 4
+
+
+> pred = predict(logistic, newdata = test, type = "response")
+
+> pred = round(pred)
+
+> results = table(dtest$Result, pred)
+
+> results
+
+   pred
+      0   1
+  L 187 318
+  W 144 433
+  
+
+> recal = results[4]/(results[4] + results[2])
+
+> prec = results[4]/(results[4] + results[3])
+
+> acc = (results[1] + results[4])/nrow(dtest)
+
+> recal
+[1] 0.7504333
+
+> prec
+[1] 0.5765646
+
+> acc
+[1] 0.5730129
+```
+
+Note that after all of that work, the best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
+
+# Support Vector Machine
