@@ -1087,4 +1087,76 @@ AIC: 3554.7
 Number of Fisher Scoring iterations: 5
 ```
 
-The family needs to be binomial since I'm predicting a categorical variable with only 2 options. Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change - I should repeat this process until my model only includes statistically significant variables.
+The family needs to be binomial since I'm predicting a categorical variable with only 2 options. Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change for different variables. Nornally, you would want to remove all of the statistically insignificant variables out of the model until you only have p-values less than the confidence interval picked. However, I believe that I'll need more variables than the few that are significant above to get much success out of this regression.
+
+<b> Goals only </b>
+
+Below is a logistic model when looking *only* at the goal variables for each team:
+
+```
+> logistic = glm(Result ~ Home_Goals + Away_Goals, data = dtrain, family = "binomial")
+
+> summary(logistic)
+
+Call:
+glm(formula = Result ~ Home_Goals + Away_Goals, family = "binomial", 
+    data = dtrain)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.742  -1.250   1.025   1.094   1.472  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)  0.22571    0.32992   0.684  0.49390
+Home_Goals   0.21247    0.07864   2.702  0.00689
+Away_Goals  -0.22156    0.08263  -2.681  0.00733
+              
+(Intercept)   
+Home_Goals  **
+Away_Goals  **
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 3571.1  on 2593  degrees of freedom
+Residual deviance: 3557.3  on 2591  degrees of freedom
+AIC: 3563.3
+
+Number of Fisher Scoring iterations: 4
+
+
+> pred = predict(logistic, newdata = test, type = "response")
+
+> pred = round(pred)
+
+> results = table(dtest$Result, pred)
+
+> results
+
+   pred
+      0   1
+  L  49 456
+  W  48 529
+
+> recal = results[4]/(results[4] + results[2])
+
+> prec = results[4]/(results[4] + results[3])
+
+> acc = (results[1] + results[4])/nrow(dtest)
+
+> recal
+[1] 0.9168111
+
+> prec
+[1] 0.5370558
+
+> acc
+[1] 0.5341959
+```
+
+Let's look at the above model. My first impression is that the goal coefficients are correct - home team goals increase the log odds (since the result is based on the home team) while away goals hurt the chances of a home win. While away goals was not statistically significant when every variable was included, it is now significant since there are only 2 variables included in this model. Once the model was run, I set up a prediction variable 'pred', that was set up as a response type since I wanted to see the fitted values (since the residual values wouldn't help me narrow this down into 2 categories). Then, I needed to round the fitted variables so that I have either a 0 or 1. While I  could change my results variable to a binary, numeric variable, I left it as it is since I know that 0 is "L" and 1 is "W".  I'll also note that I predicted the model on my test set instead of dtest, since I'll leave dtest how it is so that I havea way to compare the results (recall that test is dtest without the labels). Once everything has been set up correclty, I ran a table to check my results. First, I looked at the recall ('recal') metric - which is a whopping 91.68% when we look at the number of "W"s predicted correctly! However, as most data scientists understand, having a good recall doesn't mean that the model is any good. On the flip side of that, having a high recall for "W"s means that I have an extremely low recall for "L" (about 9.7%).  When looking at the precision of "W"s, it was only 53.7%. Even worse, when looking at the whole accuracy for the model, I only was able to correctly predict 53.42% (I can guess games much better than that rate).
+
+<b> Next </b>
