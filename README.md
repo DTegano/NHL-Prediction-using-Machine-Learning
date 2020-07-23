@@ -1313,6 +1313,16 @@ Number of Fisher Scoring iterations: 4
 [1] 0.5730129
 ```
 
-Note that after all of that work, the best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
+Note that after all of that work, the best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. Below is one graph that can be completed with the logistic regression. As we can see, the predictions were all over the place - the model could have done just as well by flipping a coin for every game. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
+
+```
+pred = predict(logistic, newdata = test, type = "response") # removed the rounding to see real value
+pred.data = data.frame(winning.chances = pred, results=dtest$Result)
+pred.data = pred.data[order(pred.data$winning.chances, decreasing = FALSE),]
+pred.data$rank = 1:nrow(pred.data)
+
+ggplot(data = pred.data, aes(x = rank, y = winning.chances)) + geom_point(aes (color = dtest$Result), alpha=1, shape = 2, stroke=2) + labs(x = "Game Number", y = "Predicted Wins/Losses", title = "Logistic Regression Results")
+```
+<img src = "https://user-images.githubusercontent.com/39016197/88246870-16821180-cc59-11ea-919a-487553c351da.png" width = 510 height = 350>
 
 # Support Vector Machine
