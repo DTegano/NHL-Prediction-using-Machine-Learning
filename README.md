@@ -1087,7 +1087,44 @@ AIC: 3554.7
 Number of Fisher Scoring iterations: 5
 ```
 
+
 The family needs to be binomial since I'm predicting a categorical variable with only 2 options. Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change for different variables. Nornally, you would want to remove all of the statistically insignificant variables out of the model until you only have p-values less than the confidence interval picked. However, I believe that I'll need more variables than the few that are significant above to get much success out of this regression.
+
+For comparison purposes, I'll still predict using the full variables set:
+
+```
+> pred = predict(logistic, newdata = test, type = "response")
+
+> pred = round(pred)
+
+> results = table(dtest$Result, pred)
+
+> results
+
+   pred
+      0   1
+  L 171 334
+  W 139 438
+  
+
+> recal = results[4]/(results[4] + results[2])
+
+> prec = results[4]/(results[4] + results[3])
+
+> acc = (results[1] + results[4])/nrow(dtest)
+
+> recal
+
+[1] 0.7590988
+
+> prec
+[1] 0.5673575
+
+> acc
+[1] 0.5628466
+```
+
+I set up a prediction variable 'pred', that was set up as a response type since I wanted to see the fitted values (since the residual values wouldn't help me narrow this down into 2 categories). Then, I needed to round the fitted variables so that I have either a 0 or 1. While I  could change my results variable to a binary, numeric variable, I left it as it is since I know that 0 is "L" and 1 is "W".  I'll also note that I predicted the model on my test set instead of dtest, since I'll leave dtest how it is so that I havea way to compare the results (recall that test is dtest without the labels). Once everything has been set up correclty, I ran a table to check my results. First, I looked at the recall ('recal') to see that it is 0.759 - which is not bad actually. However, as most data scientists understand, having a good recall doesn't mean that the model is any good. On the flip side of that, the recall for the "L" category is only 0.339. Looking at the precision (again for wins), we only see 0.567. Even worse, our accuracy for the entire model is only 56.3%. Let's hope we can do better than that with at least one of the logistic regressions below.
 
 <b> Goals only </b>
 
@@ -1157,6 +1194,6 @@ Number of Fisher Scoring iterations: 4
 [1] 0.5341959
 ```
 
-Let's look at the above model. My first impression is that the goal coefficients are correct - home team goals increase the log odds (since the result is based on the home team) while away goals hurt the chances of a home win. While away goals was not statistically significant when every variable was included, it is now significant since there are only 2 variables included in this model. Once the model was run, I set up a prediction variable 'pred', that was set up as a response type since I wanted to see the fitted values (since the residual values wouldn't help me narrow this down into 2 categories). Then, I needed to round the fitted variables so that I have either a 0 or 1. While I  could change my results variable to a binary, numeric variable, I left it as it is since I know that 0 is "L" and 1 is "W".  I'll also note that I predicted the model on my test set instead of dtest, since I'll leave dtest how it is so that I havea way to compare the results (recall that test is dtest without the labels). Once everything has been set up correclty, I ran a table to check my results. First, I looked at the recall ('recal') metric - which is a whopping 91.68% when we look at the number of "W"s predicted correctly! However, as most data scientists understand, having a good recall doesn't mean that the model is any good. On the flip side of that, having a high recall for "W"s means that I have an extremely low recall for "L" (about 9.7%).  When looking at the precision of "W"s, it was only 53.7%. Even worse, when looking at the whole accuracy for the model, I only was able to correctly predict 53.42% (I can guess games much better than that rate).
+Let's look at the above model. My first impression is that the goal coefficients are correct - home team goals increase the log odds (since the result is based on the home team) while away goals hurt the chances of a home win. While away goals was not statistically significant when every variable was included, it is now significant since there are only 2 variables included in this model. Once the model was run, I first looked at the recall - which is a whopping 91.68% when we look at the number of "W"s predicted correctly! Of course, having a high recall for "W"s means that I have an extremely low recall for "L" (about 9.7%).  When looking at the precision of "W"s, it was only 53.7%. When looking at the whole accuracy for the model, I only was able to correctly predict 53.42% (I can guess games much better than that rate).
 
 <b> Next </b>
