@@ -1196,11 +1196,11 @@ Number of Fisher Scoring iterations: 4
 
 Let's look at the above model. My first impression is that the goal coefficients are correct - home team goals increase the log odds (since the result is based on the home team) while away goals hurt the chances of a home win. While away goals was not statistically significant when every variable was included, it is now significant since there are only 2 variables included in this model. Once the model was run, I first looked at the recall - which is a whopping 91.68% when we look at the number of "W"s predicted correctly! Of course, having a high recall for "W"s means that I have an extremely low recall for "L" (about 9.7%).  When looking at the precision of "W"s, it was only 53.7%. When looking at the whole accuracy for the model, I only was able to correctly predict 53.42% (I can guess games much better than that rate).
 
-<b> Best Possible Model? </b>
+<b> Best Linear Model? </b>
 
-After experimenting with what variables I think should be in the regression and what variables should not be, I believe I came up with the best possible model with the data I have. I'll note that most of the core stats was able to stay in the model - which includes goals, shots, corsi, hits, blocked shots, differential, wins, points, save %, and shooting %. The surpirse variables that also stayed include empty net goals and penalty minutes - which makes me glad that I was able to decipher out the empty net goals with my web scraper and create a separate column. PDO, which is save % + shooting %, was able to stay in the model as long as it could - but ultimately, it was the last variable removed to get the best accuracy possible. I'll also note that all of my "against" variables, such as goals against, shots against, didn't have much weight in the logistic regresion, but I'm still hoping these will come in handy when I move on to the SVM and ANN models. 
+After experimenting with what variables I think should be in the regression and what variables should not be, I believe I came up with the best possible linear model with the data I have. I'll note that most of the core stats was able to stay in the model - which includes goals, shots, corsi, hits, blocked shots, differential, wins, points, save %, and shooting %. The surpirse variables that also stayed include empty net goals and penalty minutes - which makes me glad that I was able to decipher out the empty net goals with my web scraper and create a separate column. PDO, which is save % + shooting %, was able to stay in the model as long as it could - but ultimately, it was the last variable removed to get the best accuracy possible. I'll also note that all of my "against" variables, such as goals against, shots against, didn't have much weight in the logistic regresion, but I'm still hoping these will come in handy when I move on to the SVM and ANN models. 
 
-Here is the best logistic model I can create with this data set: 
+Here is the best linear logistic model I can create with this data set: 
 
 ```
 > summary(logistic)
@@ -1313,7 +1313,7 @@ Number of Fisher Scoring iterations: 4
 [1] 0.5730129
 ```
 
-Note that after all of that work, the best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. Below is one graph that can be completed with the logistic regression. As we can see, the predictions were all over the place - the model could have done just as well by flipping a coin for every game. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
+The best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. Below is one graph that can be completed with the logistic regression. 
 
 ```
 pred = predict(logistic, newdata = test, type = "response") # removed the rounding to see real value
@@ -1324,5 +1324,83 @@ pred.data$rank = 1:nrow(pred.data)
 ggplot(data = pred.data, aes(x = rank, y = winning.chances)) + geom_point(aes (color = dtest$Result), alpha=1, shape = 2, stroke=2) + labs(x = "Game Number", y = "Predicted Wins/Losses", title = "Logistic Regression Results")
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/88246870-16821180-cc59-11ea-919a-487553c351da.png" width = 510 height = 350>
+
+As we can see, the predictions were all over the place - the model could have done just as well by flipping a coin for every game.
+
+<b> Best Logistic Model </b>
+
+While not much better than the linear model, I was able to slightly improve the accuracy using a polynomial regression as opposed to a linear. In order to see which variables have a linear relationship with the dependent variable and which variables don't, here is a useful command:
+
+```
+mydata = test[, c(6,8,39,41)] %>%
+    dplyr::select_if(is.numeric)
+
+predictors = colnames(mydata)
+
+mydata = mydata %>%
+    mutate(logit = log(pred/(1-pred))) %>%
+    gather(key = "predictors", value = "predictor.value", -logit)
+    
+ggplot(mydata, aes(logit, predictor.value)) + geom_point(size = 0.5, alpha = 0.5) + geom_smooth(method = "loess") + 
+	theme_bw() + theme_bw() + facet_wrap(~predictors, scales = "free_y")
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/88611171-b4a11d80-d045-11ea-830c-79873d980c3e.png" width = 450 height = 320>
+
+After reviewing the variables, it did appear that other variables also had a polynomial shaped curve, but ultimately, changing those variables as polynomial made the model worse except for the 4 shown above. By adding a 2nd degree polynomial curve to home shots, penalty minutes, and away wins, as well as adding a 3rd degree to away points, I get get the best possible accuracy of 57.95%.  
+
+```
+> poly = glm(Result ~ Home_Goals + Away_Goals + poly(Home_Shots, deg=2) + Away_Shots + poly(Home_PIM, deg=2) + Away_PIM + Home_Corsi + Away_Corsi + Home_HT + Away_HT + Home_EN + Away_EN + Home_BS + Away_BS + Home_SH + Away_SH + Home_DIF + Away_DIF + Home_W + poly(Away_W, deg=2) + Home_P + poly(Away_P, deg=3) + Home_SV + Away_SV, dtrain, family = "binomial")
+
+> pred = predict(poly, newdata = test, type = "response")
+
+> pred = round(pred)
+
+> pred = as.factor(pred)
+
+> dtest$Result = ifelse(dtest$Result=="W", 1, 0)
+
+> dtest$Result = as.factor(dtest$Result)
+
+> confusionMatrix(dtest$Result, pred)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   0   1
+         0 193 312
+         1 143 434
+                                          
+               Accuracy : 0.5795          
+                 95% CI : (0.5494, 0.6091)
+    No Information Rate : 0.6895          
+    P-Value [Acc > NIR] : 1               
+                                          
+                  Kappa : 0.1372          
+                                          
+ Mcnemar's Test P-Value : 3.381e-15       
+                                          
+            Sensitivity : 0.5744          
+            Specificity : 0.5818          
+         Pos Pred Value : 0.3822          
+         Neg Pred Value : 0.7522          
+             Prevalence : 0.3105          
+         Detection Rate : 0.1784          
+   Detection Prevalence : 0.4667          
+      Balanced Accuracy : 0.5781          
+                                          
+       'Positive' Class : 0 
+```
+
+I'll also note the concerning low kappa coefficient - which is in the range of 'poor.' For those who are not familar, the kappa coefficient adjusts accuracy by accounting for the change of the model simply guessing correctly. The R^2 is also extremely low 0.023 for my best model and only 0.298 when all 45 (only the ones used for machine learning) varaibles are present. This may hint that either the logistic model is the complete wrong model to use, or there are just simply to many factors in hockey to predict games accurately. Below is an easy way to calculate R^2 on a logistic regression. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
+
+```
+> log_likelihood_null = poly$null.deviance/-2
+
+> log_likelihood_proposed = poly$deviance/-2
+
+> (log_likelihood_null - log_likelihood_proposed)/log_likelihood_null
+[1] 0.02319687 
+```
+
 
 # Support Vector Machine
