@@ -1408,11 +1408,40 @@ I'll also note the concerning low kappa coefficient - which is in the range of '
 Unfortunately, the Support Vector Machine was more disappointing than the logistic regression. Since this repository is already so long, I'll keep this section simple and will get straight to the modeling:
 
 ```
-svm_model = ksvm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_Corsi + Away_Corsi + Home_Corsi_A + Away_Corsi_A + Home_SA + Away_SA + Home_PIM_A + Away_PIM_A, data = dtrain, cost = 0.1, kpar=list(sigma=0.1))
+#SVM with only goal variables
 
-pred = predict(svm_model, test)
+> svm_model = ksvm(Result ~ Home_Goals + Away_Goals, data = dtrain, cost = 0.5)
 
-confusionMatrix(table(pred, dtest$Result), positive = "W")
+> pred = predict(svm_model, test)
+
+> results = table(dtest$Result, pred)
+
+> results
+   pred
+      L   W
+  L 147 358
+  W 122 455
+
+> recal = results[4]/(results[4] + results[2])
+
+> prec = results[4]/(results[4] + results[3])
+
+> acc = (results[1] + results[4])/nrow(dtest)
+
+> recal
+[1] 0.7885615
+> prec
+[1] 0.5596556
+> acc
+[1] 0.5563771
+
+# Best model
+
+> svm_model = ksvm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_Corsi + Away_Corsi + Home_Corsi_A + Away_Corsi_A + Home_SA + Away_SA + Home_PIM_A + Away_PIM_A, data = dtrain, cost = 0.1, kpar=list(sigma=0.1))
+
+> pred = predict(svm_model, test)
+
+> confusionMatrix(table(pred, dtest$Result), positive = "W")
 Confusion Matrix and Statistics
 
     
@@ -1441,4 +1470,8 @@ pred   L   W
        'Positive' Class : W
 ```
 
-You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improced by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring.
+<img src = "https://user-images.githubusercontent.com/39016197/88880951-4eee9600-d1eb-11ea-8b6a-0833311c804e.png" width = 450 height = 320>
+
+You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improced by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring. Regardless, after many attempts, I couldn't get the SVM to even beat the logistic regression. On to the Neural Network.
+
+# Neural Network
