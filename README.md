@@ -1404,3 +1404,41 @@ I'll also note the concerning low kappa coefficient - which is in the range of '
 
 
 # Support Vector Machine
+
+Unfortunately, the Support Vector Machine was more disappointing than the logistic regression. Since this repository is already so long, I'll keep this section simple and will get straight to the modeling:
+
+```
+svm_model = ksvm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_Corsi + Away_Corsi + Home_Corsi_A + Away_Corsi_A + Home_SA + Away_SA + Home_PIM_A + Away_PIM_A, data = dtrain, cost = 0.1, kpar=list(sigma=0.1))
+
+pred = predict(svm_model, test)
+
+confusionMatrix(table(pred, dtest$Result), positive = "W")
+Confusion Matrix and Statistics
+
+    
+pred   L   W
+   L 155 110
+   W 350 467
+                                          
+               Accuracy : 0.5749          
+                 95% CI : (0.5448, 0.6045)
+    No Information Rate : 0.5333          
+    P-Value [Acc > NIR] : 0.00329         
+                                          
+                  Kappa : 0.1198          
+                                          
+ Mcnemar's Test P-Value : < 2e-16         
+                                          
+            Sensitivity : 0.8094          
+            Specificity : 0.3069          
+         Pos Pred Value : 0.5716          
+         Neg Pred Value : 0.5849          
+             Prevalence : 0.5333          
+         Detection Rate : 0.4316          
+   Detection Prevalence : 0.7551          
+      Balanced Accuracy : 0.5581          
+                                          
+       'Positive' Class : W
+```
+
+You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improced by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring.
