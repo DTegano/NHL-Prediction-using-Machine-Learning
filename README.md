@@ -1647,3 +1647,176 @@ Model architecture:
 model %>% plot_model()
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/89111757-d704b380-d416-11ea-82c7-c83908d6c0ea.png" width = 450 height = 400>
+
+Notice that the architecture is quite different than what the first model looked like (excluding node count). I'll also get to choose my loss, optimizer (both availbe in the first model, but not as effective) and metrics. I'll run 40 epochs with batch sample sizes of 32, and a validation set at 20% of my training data (which does reduce the overall size of my traininig data).
+
+```
+> model %>%
++   compile(loss = "binary_crossentropy",
++           optimizer = 'adam',
++           metrics = "accuracy")
+> 
+> history = model %>%
++   fit(train,
++       trainLabels,
++       epoch = 40,
++       batch_size = 32,
++       validation_split = 0.2)
+Train on 2075 samples, validate on 519 samples
+Epoch 1/40
+2075/2075 [==============================] - 1s 420us/sample - loss: 0.7822 - accuracy: 0.5031 - val_loss: 0.6887 - val_accuracy: 0.5356
+Epoch 2/40
+2075/2075 [==============================] - 0s 131us/sample - loss: 0.7317 - accuracy: 0.5169 - val_loss: 0.6874 - val_accuracy: 0.5405
+Epoch 3/40
+2075/2075 [==============================] - 0s 128us/sample - loss: 0.7109 - accuracy: 0.5154 - val_loss: 0.6877 - val_accuracy: 0.5520
+Epoch 4/40
+2075/2075 [==============================] - 0s 137us/sample - loss: 0.7033 - accuracy: 0.5292 - val_loss: 0.6869 - val_accuracy: 0.5472
+Epoch 5/40
+2075/2075 [==============================] - 0s 141us/sample - loss: 0.6927 - accuracy: 0.5557 - val_loss: 0.6864 - val_accuracy: 0.5424
+Epoch 6/40
+2075/2075 [==============================] - 0s 164us/sample - loss: 0.6862 - accuracy: 0.5670 - val_loss: 0.6860 - val_accuracy: 0.5405
+Epoch 7/40
+2075/2075 [==============================] - 0s 165us/sample - loss: 0.6827 - accuracy: 0.5737 - val_loss: 0.6848 - val_accuracy: 0.5462
+Epoch 8/40
+2075/2075 [==============================] - 0s 174us/sample - loss: 0.6829 - accuracy: 0.5641 - val_loss: 0.6843 - val_accuracy: 0.5511
+Epoch 9/40
+2075/2075 [==============================] - 0s 186us/sample - loss: 0.6822 - accuracy: 0.5610 - val_loss: 0.6834 - val_accuracy: 0.5462
+Epoch 10/40
+2075/2075 [==============================] - 0s 180us/sample - loss: 0.6830 - accuracy: 0.5655 - val_loss: 0.6832 - val_accuracy: 0.5520
+Epoch 11/40
+2075/2075 [==============================] - 0s 178us/sample - loss: 0.6833 - accuracy: 0.5788 - val_loss: 0.6834 - val_accuracy: 0.5453
+Epoch 12/40
+2075/2075 [==============================] - 0s 184us/sample - loss: 0.6824 - accuracy: 0.5663 - val_loss: 0.6828 - val_accuracy: 0.5491
+Epoch 13/40
+2075/2075 [==============================] - 0s 185us/sample - loss: 0.6788 - accuracy: 0.5723 - val_loss: 0.6815 - val_accuracy: 0.5520
+Epoch 14/40
+2075/2075 [==============================] - 0s 188us/sample - loss: 0.6762 - accuracy: 0.5725 - val_loss: 0.6808 - val_accuracy: 0.5511
+Epoch 15/40
+2075/2075 [==============================] - 0s 192us/sample - loss: 0.6767 - accuracy: 0.5783 - val_loss: 0.6807 - val_accuracy: 0.5491
+Epoch 16/40
+2075/2075 [==============================] - 0s 177us/sample - loss: 0.6788 - accuracy: 0.5677 - val_loss: 0.6806 - val_accuracy: 0.5568
+Epoch 17/40
+2075/2075 [==============================] - 0s 182us/sample - loss: 0.6756 - accuracy: 0.5870 - val_loss: 0.6802 - val_accuracy: 0.5539
+Epoch 18/40
+2075/2075 [==============================] - 0s 179us/sample - loss: 0.6709 - accuracy: 0.5752 - val_loss: 0.6794 - val_accuracy: 0.5511
+Epoch 19/40
+2075/2075 [==============================] - 0s 174us/sample - loss: 0.6741 - accuracy: 0.5781 - val_loss: 0.6796 - val_accuracy: 0.5511
+Epoch 20/40
+2075/2075 [==============================] - 0s 180us/sample - loss: 0.6720 - accuracy: 0.5807 - val_loss: 0.6797 - val_accuracy: 0.5434
+Epoch 21/40
+2075/2075 [==============================] - 0s 171us/sample - loss: 0.6668 - accuracy: 0.6012 - val_loss: 0.6789 - val_accuracy: 0.5491
+Epoch 22/40
+2075/2075 [==============================] - 0s 179us/sample - loss: 0.6763 - accuracy: 0.5761 - val_loss: 0.6792 - val_accuracy: 0.5462
+Epoch 23/40
+2075/2075 [==============================] - 0s 191us/sample - loss: 0.6678 - accuracy: 0.5940 - val_loss: 0.6792 - val_accuracy: 0.5434
+Epoch 24/40
+2075/2075 [==============================] - 0s 186us/sample - loss: 0.6667 - accuracy: 0.5990 - val_loss: 0.6784 - val_accuracy: 0.5539
+Epoch 25/40
+2075/2075 [==============================] - 0s 179us/sample - loss: 0.6656 - accuracy: 0.5973 - val_loss: 0.6779 - val_accuracy: 0.5626
+Epoch 26/40
+2075/2075 [==============================] - 1s 345us/sample - loss: 0.6656 - accuracy: 0.5947 - val_loss: 0.6776 - val_accuracy: 0.5655
+Epoch 27/40
+2075/2075 [==============================] - 0s 178us/sample - loss: 0.6682 - accuracy: 0.5896 - val_loss: 0.6772 - val_accuracy: 0.5626
+Epoch 28/40
+2075/2075 [==============================] - 0s 176us/sample - loss: 0.6640 - accuracy: 0.6029 - val_loss: 0.6772 - val_accuracy: 0.5578
+Epoch 29/40
+2075/2075 [==============================] - 0s 174us/sample - loss: 0.6638 - accuracy: 0.5930 - val_loss: 0.6762 - val_accuracy: 0.5578
+Epoch 30/40
+2075/2075 [==============================] - 0s 181us/sample - loss: 0.6645 - accuracy: 0.6017 - val_loss: 0.6760 - val_accuracy: 0.5636
+Epoch 31/40
+2075/2075 [==============================] - 0s 178us/sample - loss: 0.6642 - accuracy: 0.5906 - val_loss: 0.6760 - val_accuracy: 0.5645
+Epoch 32/40
+2075/2075 [==============================] - 0s 173us/sample - loss: 0.6618 - accuracy: 0.6031 - val_loss: 0.6747 - val_accuracy: 0.5742
+Epoch 33/40
+2075/2075 [==============================] - 0s 178us/sample - loss: 0.6638 - accuracy: 0.5995 - val_loss: 0.6753 - val_accuracy: 0.5703
+Epoch 34/40
+2075/2075 [==============================] - 0s 175us/sample - loss: 0.6653 - accuracy: 0.6002 - val_loss: 0.6754 - val_accuracy: 0.5674
+Epoch 35/40
+2075/2075 [==============================] - 0s 177us/sample - loss: 0.6600 - accuracy: 0.5973 - val_loss: 0.6756 - val_accuracy: 0.5684
+Epoch 36/40
+2075/2075 [==============================] - 0s 181us/sample - loss: 0.6543 - accuracy: 0.6118 - val_loss: 0.6753 - val_accuracy: 0.5665
+Epoch 37/40
+2075/2075 [==============================] - 0s 185us/sample - loss: 0.6610 - accuracy: 0.6029 - val_loss: 0.6753 - val_accuracy: 0.5578
+Epoch 38/40
+2075/2075 [==============================] - 0s 182us/sample - loss: 0.6561 - accuracy: 0.6094 - val_loss: 0.6752 - val_accuracy: 0.5665
+Epoch 39/40
+2075/2075 [==============================] - 0s 179us/sample - loss: 0.6596 - accuracy: 0.6067 - val_loss: 0.6749 - val_accuracy: 0.5626
+Epoch 40/40
+2075/2075 [==============================] - 0s 183us/sample - loss: 0.6588 - accuracy: 0.5981 - val_loss: 0.6746 - val_accuracy: 0.5597
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/89111812-6b6f1600-d417-11ea-946d-0b04b8f73c5d.png" width = 600 height = 500>
+
+When looking at just the validation accuracy:
+
+<img src = "https://user-images.githubusercontent.com/39016197/89111821-95283d00-d417-11ea-8989-225798e4d477.png" width = 600 height = 500>
+
+I can also see which weights were the strongest by viewing the history varaible data and running a few quick commands:
+```
+> max_val_acc  = order(history$metrics$val_accuracy, decreasing = TRUE)
+> epoch = max_val_acc[1] 
+> epoch
+[1] 32
+> history$metrics$val_accuracy[epoch]
+[1] 0.5741811
+```
+
+By using those weights, I can evaluate my model:
+
+```
+model %>%
++   evaluate(test, testLabels)
+1082/1082 [==============================] - 0s 82us/sample - loss: 0.6924 - accuracy: 0.5721
+$loss
+[1] 0.6923977
+
+$accuracy
+[1] 0.5720887
+
+
+> prob = model %>%
++   predict_on_batch(test)
+
+> pred = ifelse(model$predict(test)[,1]>model$predict(test)[,2], 0,1)
+
+> table(Predicted = pred, Actual = testtarget)
+         Actual
+Predicted   0   1
+        0 205 164
+        1 300 413
+
+
+> Results = ifelse(pred==1, "W", "L")
+
+> Results = as.factor(Results)
+
+> confusionMatrix(ttest$Result, Results, positive = "W")
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   L   W
+         L 205 300
+         W 164 413
+                                          
+               Accuracy : 0.5712          
+                 95% CI : (0.5411, 0.6009)
+    No Information Rate : 0.659           
+    P-Value [Acc > NIR] : 1               
+                                          
+                  Kappa : 0.1238          
+                                          
+ Mcnemar's Test P-Value : 3.676e-10       
+                                          
+            Sensitivity : 0.5792          
+            Specificity : 0.5556          
+         Pos Pred Value : 0.7158          
+         Neg Pred Value : 0.4059          
+             Prevalence : 0.6590          
+         Detection Rate : 0.3817          
+   Detection Prevalence : 0.5333          
+      Balanced Accuracy : 0.5674          
+                                          
+       'Positive' Class : W               
+```
+Obviously, this is much better than the first nueural network model, but still room for plenty of improvement.
+
