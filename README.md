@@ -1542,3 +1542,108 @@ plot(ann_model, col.hidden = 'darkgreen', col.hidden.synapse = 'darkgreen', col.
 <img src = "https://user-images.githubusercontent.com/39016197/89111358-22689300-d412-11ea-983a-c0db622d3e02.png" width = 600 height = 500>
 
 Despite how powerful the neural network is, these results aren't good. In my opinion, in order to run this correctly, I'll need to utilize the keras/tensorflow packages in R. Not only will this speed up the model time (I set the loss threshold high enough for the model to run only once since it not only takes a long time, but it constantly gets stuck at the same loss threshold - which causes the model to be invalid), but the ability to customize the neural network will be much more beneficial for getting good results.
+
+```
+library(keras)
+library(tensorflow)
+library(deepviz)
+library(magrittr)
+```
+After installing the necessary packages, I can proceed with this 'upgraded' neural network model. I'll note that using the keras model with tensorflow will require a different set up than what I currently have. Essentially, I'll need to convert my data into a 2D tensor (also called a matrix) and one-hot encode my predictor variable.
+
+```
+# Set up Model
+dtrain$Result = as.numeric(dtrain$Result)
+dtest$Result = as.numeric(dtest$Result)
+
+train = as.matrix(dtrain)
+test = as.matrix(dtest)
+
+dimnames(train) = NULL
+dimnames(test) = NULL
+
+train[,2:45] = scal(train[,2:45])
+test[,2:45] = scal(test[,2:45])
+
+train[,1] = train[,1] - 1
+test[,1] = test[,1] - 1
+
+traintarget = train[,1]
+testtarget = test[,1]
+
+train = train[, 2:45]
+test = test[, 2:45]
+
+trainLabels = to_categorical(traintarget) #check tf_config if issue
+testLabels = to_categorical(testtarget)
+
+head(testLabels)
+     [,1] [,2]
+[1,]    0    1
+[2,]    0    1
+[3,]    0    1
+[4,]    1    0
+[5,]    0    1
+[6,]    1    0
+```
+As opposed to my last neural network model, I'll note that I scaled my data this time instead - as this seems to yield more promising results than normalized data (believe me, I've checked).  Next, I'll build my new neural network using API functional:
+
+```
+model = NULL
+
+model <- local({
+  input = layer_input(shape = c(44), name = 'main_input')
+  
+  layer1 = input %>%
+    layer_dense(units = 30, activation = "relu")
+  
+  layer2 = input %>%
+    layer_dense(units = 30, activation = "relu")
+  
+  output = layer_concatenate(c(layer1, layer2)) %>%
+    layer_dropout(0.5) %>%
+    layer_batch_normalization() %>%
+    layer_dense(units = 10, activation = "relu") %>%
+    layer_dense(units = 2, activation = "sigmoid", name = 'main_output')
+  
+  keras_model(inputs = input, outputs = output)
+})
+```
+
+I'll note that instead of 50 hidden layers followed by 10, I have 30 node layers split into two paths before concatenating. This is then followed by a dropout and batch normalization layer before wrapping up with 10 more hidden nodes before the output layer. More importantly, I have more control over my input and output layers.
+
+```
+summary(model)
+Model: "model_4"
+________________________________________________________________________________________________________________________________________
+Layer (type)                                Output Shape                  Param #          Connected to                                 
+========================================================================================================================================
+main_input (InputLayer)                     [(None, 44)]                  0                                                             
+________________________________________________________________________________________________________________________________________
+dense_16 (Dense)                            (None, 30)                    1350             main_input[0][0]                             
+________________________________________________________________________________________________________________________________________
+dense_17 (Dense)                            (None, 30)                    1350             main_input[0][0]                             
+________________________________________________________________________________________________________________________________________
+concatenate_4 (Concatenate)                 (None, 60)                    0                dense_16[0][0]                               
+                                                                                           dense_17[0][0]                               
+________________________________________________________________________________________________________________________________________
+dropout_4 (Dropout)                         (None, 60)                    0                concatenate_4[0][0]                          
+________________________________________________________________________________________________________________________________________
+batch_normalization_4 (BatchNormalization)  (None, 60)                    240              dropout_4[0][0]                              
+________________________________________________________________________________________________________________________________________
+dense_18 (Dense)                            (None, 10)                    610              batch_normalization_4[0][0]                  
+________________________________________________________________________________________________________________________________________
+main_outout (Dense)                         (None, 2)                     22               dense_18[0][0]                               
+========================================================================================================================================
+Total params: 3,572
+Trainable params: 3,452
+Non-trainable params: 120
+________________________________________________________________________________________________________________________________________
+```
+
+Model architecture:
+
+```
+model %>% plot_model()
+```
+<img src = "https://user-images.githubusercontent.com/39016197/89111757-d704b380-d416-11ea-82c7-c83908d6c0ea.png" width = 450 height = 400>
