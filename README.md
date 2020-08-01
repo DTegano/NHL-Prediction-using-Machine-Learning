@@ -1475,3 +1475,68 @@ pred   L   W
 You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improced by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring. Nonetheless, these are the variables that work best with this model. Even normalizing and scaling the data couldn't yield better resuslts. After many attempts, I couldn't get the SVM to even beat the logistic regression. On to the Neural Network.
 
 # Neural Network
+
+To start, I'll run a neural network model, with all of the varibles, using the neural net package. I don't expect good results for this model for several reasons: 1) I prefer running neural networks using the keras/tensorflow packages, 2) many of the activation & optimizer functions, as well as the input/output layers, can't be modified here and 3) The only real reason to run this model is to show a plot example, since this is not currently an option for the keras/tf packages. I'll note that I'll need to first normalize my data before running the model:
+
+```
+dtrain_norm = as.data.frame(lapply(dtrain[,2:45], normalize))
+
+dtrain_norm = cbind(dtrain$Result, dtrain_norm)
+names(dtrain_norm)[1] = "Result"
+
+dtest_norm = as.data.frame(lapply(dtest[,2:45], normalize))
+
+attach(dtrain_norm)
+
+set.seed(18)
+
+ann_model = neuralnet(Result ~ ., data = dtrain_norm, hidden = c(50,10), threshold = 7.0, stepmax = 1e5, err.fct = "ce", act.fct = "logistic", linear.output = FALSE, lifesign = 'full', learningrate = NULL, rep = 1)
+hidden: 50, 10    thresh: 7    rep: 1/1    steps:     519	error: 97.93533	time: 13.04 secs
+
+net.predict = compute(ann_model, dtest_norm)$net.result
+
+net.prediction = c("W", "L")[apply(net.predict, 1, which.max)]
+
+predict.table = table(dtest$Result, net.prediction)
+
+predict.table
+   net.prediction
+      L   W
+  L 263 242
+  W 311 266
+
+net.prediction = as.factor(net.prediction)
+
+confusionMatrix(net.prediction, dtest$Result, positive = "W")
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   L   W
+         L 263 311
+         W 242 266
+                                          
+               Accuracy : 0.4889          
+                 95% CI : (0.4587, 0.5192)
+    No Information Rate : 0.5333          
+    P-Value [Acc > NIR] : 0.998421        
+                                          
+                  Kappa : -0.018          
+                                          
+ Mcnemar's Test P-Value : 0.003832        
+                                          
+            Sensitivity : 0.4610          
+            Specificity : 0.5208          
+         Pos Pred Value : 0.5236          
+         Neg Pred Value : 0.4582          
+             Prevalence : 0.5333          
+         Detection Rate : 0.2458          
+   Detection Prevalence : 0.4695          
+      Balanced Accuracy : 0.4909          
+                                          
+       'Positive' Class : W               
+                              
+
+plot(ann_model, col.hidden = 'darkgreen', col.hidden.synapse = 'darkgreen', col.intercept = "red", col.out = "blue", show.weights = F, information = F, fill = 'lightblue')
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/89111358-22689300-d412-11ea-983a-c0db622d3e02.png" width = 600 height = 500>
