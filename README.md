@@ -1540,3 +1540,5 @@ plot(ann_model, col.hidden = 'darkgreen', col.hidden.synapse = 'darkgreen', col.
 ```
 
 <img src = "https://user-images.githubusercontent.com/39016197/89111358-22689300-d412-11ea-983a-c0db622d3e02.png" width = 600 height = 500>
+
+Despite how powerful the neural network is, these results aren't good. In my opinion, in order to run this correctly, I'll need to utilize the keras/tensorflow packages in R. Not only will this speed up the model time (I set the loss threshold high enough for the model to run only once since it not only takes a long time, but it constantly gets stuck at the same loss threshold - which causes the model to be invalid), but the ability to customize the neural network will be much more beneficial for getting good results.
