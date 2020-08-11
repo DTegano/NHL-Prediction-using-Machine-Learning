@@ -537,13 +537,14 @@ Finally, I'll conclude this max-min comparison with the often-overlooked Offensi
 
 # Analysis - Aggregated Data
 
-Here we are moving away from our raw data to our aggregated data - which each game representing the team's average stats for each variable <i>prior</i> to that game being played. This is the same data I'll use for the rest of this repository and will predict games with.
+Here we are moving away from our raw data to our aggregated data - with each game representing the team's average stats for each variable <i>prior</i> to that game being played. This is the same data I'll use for the rest of this analysis portion and will predict games with.
 
 To begin, I'll start running a few different tests to compare the home and away data. It's worth exploring since I want to know whether home ice has an advantage (or has a weight when it comes to predicting) - in data science terms, I want to see if there is a statistically significant difference between home and away variables.
 
 <b> Goals </b>
 
-The first command I'll run is to look at the distribution of the variables, followed by a shapiro test in order to confirm normality: 
+The first command I'll run is to look at the distribution of the variables, followed by a shapiro test in order to confirm normality:
+
 
 ```
 hist(Home_Goals)
@@ -573,9 +574,10 @@ data:  Away_Goals
 W = 0.94241, p-value < 2.2e-16
 ```
 
-As we can see from the above graphs, the goal variable doesn't have a normal distribution - as the data doesn't have that bell shape spread away from the mean. This is also confirmed with the shapiro test, which our null hypothesis would be that the data is normally distributed. With the p-values at the lowest possible value in R (2.2 x e^-16), we can easily reject the null hypthoesis that goal data is normally distributed.
+As we can see from the above graphs, the goal variable doesn't have a normal distribution - as the data doesn't have that bell shape spread away from the mean. This is also confirmed with the shapiro test, which our null hypothesis would be that the data is normally distributed. With the p-values at the lowest possible value in R (2.2 x e^-16), we can easily reject the null hypothesis that goal data is normally distributed.
 
-I'll also run a quick correlation test to make sure there isn't a strong correlation between the two variables. To test if there is a statistical significant difference between the home and away goals, I'll run a T-test to make sure the means between the two variables are statistically different. However, in order to do this, one of the T-test assumptions is that both variables already have a normal distribution. Below is my function to normalize this data, as well as the other R commands:
+I'll also run a quick correlation test to make sure there isn't a strong correlation between the two variables. To test if there is a statistically significant difference between the home and away goals, I'll run a T-test to make sure the means between the two variables are statistically different. However, to do this, one of the T-test assumptions is that both variables already have a normal distribution. Below is my function to normalize this data, as well as the other R commands:
+
 
 ```
 # Normalize Function
@@ -602,12 +604,12 @@ mean of x mean of y
 0.2995634 0.4003824 
 ```
 
-Based on the p-value of the T-test, we can reject the null hypothesis that there is no difference in the means between home and away goals. There is a statistical significant different between the two variables. I'll also note that the T-test was not paired since the data comes from different participants.
+Based on the p-value of the T-test, we can reject the null hypothesis that there is no difference in the means between home and away goals. There is a statistically significant different between the two variables. I'll also note that the T-test was not paired since the data comes from different participants.
 
 
 <b> Corsi </b>
 
-Next, I'll do the same commands as I did with goals but with Corsi. Looking ahead at correlations for the Result variable, you'll understand why this variable was chosen to be looked at.
+Next, I'll do the same commands as I did with the goal variables but with Corsi now. Looking ahead at correlations for the Result variable, you'll understand why this variable was chosen to be looked at.
 
 ```
 hist(Home_Corsi)
@@ -637,8 +639,7 @@ data:  Away_Corsi
 W = 0.96966, p-value < 2.2e-16
 ```
 
-Very similiar to goals (and pretty much all of the other variables), we see that there is not a normal distribution with corsi data. Now, I'll test for significance: 
-
+Very similar to goals (and pretty much all of the other variables), we see that there is not a normal distribution with the corsi data. Now, I'll test for significance:
 ```
 > cor(Home_Corsi, Away_Corsi)
 [1] -0.02187122
@@ -662,9 +663,9 @@ mean of x mean of y
 0.5164798 0.4836585 
 ```
 
-I'll note here that if one team dominates the corsi %, the other will have a much lower corsi% - which is why the negative relationship makes sense.  I can reject the null hypothesis that there is no difference between the means of the home and away corsi.
+I'll note here that if one team dominates the corsi %, the other will have a much lower corsi% - which is why the negative relationship makes sense.  I can reject the null hypothesis that there is no difference between the means of the home and away corsi variables.
 
-To wrap up this section, I'll if confirm that the home and away variables are completely independent of each other (as they should be, based on how the data was manipulated) by running a chi-square tests. I'll also run a chi-square test on our Results variable:
+To wrap up this section, I'll confirm that the home and away variables are completely independent of each other (as they should be, based on how the data was manipulated) by running chi-square tests. I'll also run a chi-square test on our Results variable:
 
 ```
 > chisq.test(table(dt[,c("Result", "Home_Goals")]))
@@ -682,13 +683,13 @@ data:  table(dt[, c("Home_Goals", "Away_Goals")])
 X-squared = 1355962, df = 1243216, p-value < 2.2e-16
 ```
 
-To interpret the above, I have to note that there are two null hyptheses above. Let's recall that the null hypothesis is the accepted hypothesis. For Results and home goals, it is accepted that the two variables are dependent on each other. Since the p-value is very high, we fail to reject that null hypotheis. It gets more interesting when we look at the home and away variables. The way the data is manipulated, it should be accepted that the home and away team stats are independent of each other and that should be my null hypothesis in that sense; this makes sense since there should be no relationship between the two. However, that's not how the model sees it. Since the p-value is at its' absolute minimum value, I would have no choice but to reject this notion that there is no relationship. While I know that's not the case here, I'll give the test the benefit of the doubt and say there should be some relationship between the two stats - since eventually, the two teams would have to play each other and each team's averaged stats would have to impact each other somehow.
+To interpret the above, I’ll note that there are two null hypotheses above. Let's recall that the null hypothesis is the accepted hypothesis. For Results and home goals, it is accepted that the two variables are dependent on each other. Since the p-value is very high, we fail to reject that null hypothesis. It gets more interesting when we look at the home and away variables. The way the data is manipulated, it should be accepted that the home and away team stats are independent of each other and that should be my null hypothesis in that sense; this makes sense since there should be no relationship between the two. However, that's not how the model sees it. Since the p-value is at its' absolute minimum value, I would have no choice but to reject this notion that there is no relationship. While I know that's not the case here, I'll give the test the benefit of the doubt and say there should be some relationship between the two stats - since eventually, the two teams would have to play each other and each team's averaged stats would have to impact each other somehow.
 
 
 
 # Correlations and Regressions
 
-Before I get to the machine learning aspect of my project, I want look at the variable correlations as well as running regressions on a few different variables. First, I want to run a correlation command that will show me the strongest positive and negative correlations on my predictor variable - Results. Since my Results variable is currently as factor in my data set, I'll first copy the data frame and create a numeric, binary variable to represent a "win" in an game's outcome:
+Before I get to the machine learning aspect of my project, I want look at the variable correlations as well as running regressions on a few different variables. First, I want to run a correlation command that will show me the strongest positive and negative correlations on my predictor variable - Results. Since my Results variable is currently as factor in my data set, I'll first copy the data frame and create a numeric, binary variable to represent a "win" in a game's outcome:
 
 <b> Results </b>
 ```
@@ -751,7 +752,7 @@ Away_Corsi_A   Away_OFS_A    Home_BS_A      Home_BS
  0.003073305 
 ```
 
-Let's take a moment to digest this information. With the amount of variables and factors that go into a hockey game, it doesn't necessarily surprise me that the strongest correlation of a game result is only .0838, but I was hoping for a variable to at least hit 0.10. When we look at the positive variables that affect the outcome, the top variables are the Home team's Corsi %, season differential (+/- based on goals scored and goals against), points, wins, and how bad the other team's defensive/goaltending is. I'll note that the classic favorite variables, goals and shots, are no where near the top correlation variables for the home team. In fact, when we look at correlation strength alone (abs_cor, which ignores the positive or negative relationship), home_goals is ranked 21st while shots for both home and away teams fall even further. However, according to correlation strength, the average goals scored by the away team is much more important. Perhaps this is due to good team's ability to win away from home ice, or that home ice is such an advantage that it doesn't matter if a high scoring or a low scoring team is the home team - both are valid points in my opinion. So based on correlation strength alone, the outcome of a game depends on the away team and how they fare based on average point, differential, win, goals, and corsi per game - which, I'll interpret as a team's ability to take away the home ice advantage from their opponent. Surprisngly, the away team's offensive zone start % is a high enough correlation to be near the top, but after my previous analysis with the min-max values, it'll be interesting to see how much of a factor this will really have. Despite that same min-max analysis where corsi had a mixed result, this appears to be the top variable for both the home and away team. I'll also pay a bit more attention to the points, differential, and win variables for the remainder of this project - but it is no surprise that there variables are among top correlations (good teams win, put up points, and will usually have a positive differential).
+Let's take a moment to digest this information. With the number of variables and factors that go into a hockey game, it doesn't necessarily surprise me that the strongest correlation of a game result is only .0838, but I was hoping for a variable to at least hit 0.10. When we look at the positive variables that affect the outcome, the top variables are the Home team's Corsi %, season differential (+/- based on goals scored and goals against), points, wins, and how bad the other team's defensive/goaltending is. I'll note that the classic favorite variables, goals and shots, are nowhere near the top correlation variables for the home team. In fact, when we look at correlation strength alone (abs_cor, which ignores the positive or negative relationship), home goals is ranked 21st while shots for both home and away teams fall even further. However, according to correlation strength, the average goals scored by the away team is much more important. Perhaps this is due to good team's ability to win away from home ice, or that home ice is such an advantage that it doesn't matter if a high scoring or a low scoring team is the home team - both are valid points in my opinion. So based on correlation strength alone, the outcome of a game depends on the away team and how they fare based on average point, differential, win, goals, and Corsi per game - which, I'll interpret as a team's ability to take away the home ice advantage from their opponent. Surprisingly, the away team's offensive zone start % is a high enough correlation to be near the top, but after my previous analysis with the min-max values, it'll be interesting to see how much of a factor this will really have. Despite that same min-max analysis where Corsi had a mixed result, this appears to be the top variable for both the home and away team. I'll also pay a bit more attention to the points, differential, and win variables for the remainder of this project - but it is no surprise that there variables are among top correlations (good teams win, put up points, and will usually have a positive differential).
 
 <b> Away Points </b>
 
