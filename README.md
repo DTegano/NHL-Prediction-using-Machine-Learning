@@ -35,7 +35,7 @@ library(magrittr)
 
 # Re-Structuring the Data
 
-I'll be the first to admit when I'm wrong about something. If you looked at part 1 of this project, you'll notice that most of my data was structured to use a cumulative sum - which meant that stats were aggregating for each team as the season went on. Unfortunately, it didn't take my long in my analysis to notice the problem with that. Before I jump into anything else, let me show you the issue I noticed:
+I'll be the first to admit when I'm wrong about something. If you looked at part 1 of this project, you'll notice that most of my data was structured to use a cumulative sum - which meant that stats were aggregating for each team as the season went on. Unfortunately, it didn't take me long in my analysis to notice the problem with that. Before I jump into anything else, let me show you the issue I noticed:
 
 ``` 
 > cor(ttrain$Home_Goals, ttrain$Home_BS)
