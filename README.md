@@ -4,7 +4,8 @@
 
 This is part 2 of my main overall project. In order to predict games, the NHL data needs to be structured in a specific way. If you're unfamiliar with this process or haven't read Part 1 of this project, please check out this link: https://github.com/DTegano/Web-Scraping-NHL-Data-for-Prediction-using-Machine-Learning
 
-<b> * Editor Note </b> Towards the end of my project when optimizing my model, I'll note that I added the 2015-2016 and 2016-2017 seasons as additional training data.
+<b> * Editor's Note: </b> Towards the end of my project when optimizing my model, I'll note that I added the 2015-2016 and 2016-2017 seasons as additional training data.
+
 # Libraries 
 
 Here are my libraries:
@@ -308,7 +309,7 @@ away_grab = function(x) {
 ```
 
 
-Aside from goals, shots can be considered the next greatest factor that can influence the result of a game. To have an impact on the outcome, we would expect that the teams with the maximum shot count would win their games and the teams with the lowest shot counts would lose their games. However, the results above indicate that at the highest and lowest shot totals, the teams generating those shots lost all of the games (note that "W" indicates a home win and "L" indicates an away win). The Carolina Hurrincanes recorded the most shots in single game - putting up 60 shots in November 2017. However, they lost that game - as did the Washington Capitals when they put up 58 shots as the home team in March 2019.
+Aside from goals, shots <i>can</i> be considered the next greatest factor that can influence the result of a game. To have an impact on the outcome, we would expect that the teams with the maximum shot count would win their games and the teams with the lowest shot counts would lose their games. However, the results above indicate that at the highest and lowest shot totals, the teams generating those shots lost all the games (note that "W" indicates a home win and "L" indicates an away win). The Carolina Hurricanes recorded the most shots in single game - putting up 60 shots in November 2017. However, they lost that game, as did the Washington Capitals when they put up 58 shots as the home team in March 2019. While this does not match the trend I would expect, at least the teams with the fewest amount of shots lost their games.
 
 
 <b>Hits</b>
