@@ -8,7 +8,7 @@ This is part 2 of my main overall project. In order to predict games, the NHL da
 
 # Libraries 
 
-Here are my libraries:
+Here are my libraries used for this project:
 
 ```
 library(readxl) # importing xls & xlsx files
@@ -32,6 +32,8 @@ library(tensorflow)
 library(deepviz)
 library(magrittr)
 ```
+
+The main packages used for the analysis portion was the caret, stats, kernlab, keras, and tensorflow packages. The confusion matrix within the caret package is extremely handy for when you're comparing a model's prediction results. Kernlab was used for the Support Vector Machine and the Keras/Tensorflow packages were used to build a more complex neural network than the models offered in the neuralnet package - I highly recommend the switch for anyone with an interest in build neural networks using R.
 
 # Re-Structuring the Data
 
