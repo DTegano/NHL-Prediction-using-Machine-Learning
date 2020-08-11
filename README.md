@@ -57,7 +57,7 @@ To fix this problem, I had to go back to my raw data and apply the same scriptin
 
 <img src = "https://user-images.githubusercontent.com/39016197/87491760-3173d680-c606-11ea-8902-cd9be499187a.png" width = 470 height = 250>
 
-A correlation value of 0.064 makes much more sense than 0.959 between goals and blocked shots. We're finally ready to move on to the analysis. 
+A correlation value of 0.064 makes much more sense than the 0.959 value between goals and blocked shots. With that corrected, I can move on to the next step.
 
 # Importing the Data
 
@@ -74,7 +74,7 @@ raw_2020 = read_excel("2019-2020 Test Base.xlsx", col_names = TRUE)
 dt = rbind(raw_2018, raw_2019, raw_2020)
 ```
 
-Once I have combined my training set with my entire test set, I'll create new set and remove the Results column from my test set - as this will be the variable we will be predicting. I want to keep my Results variable in my original test set so that I can compare my machine learning results later on. I'll also remove the date and team names from my training and test set - as I will not need these variables when I make my predicitons. Finally, I need to make sure that my Prediction variable is set as a factor, as well as the the result, team names, and game length for the raw data analysis:
+Once I have combined my training set with my entire test set, I'll create a new set and remove the Results column from my test set - as this will be the variable we will be predicting. Since I want to keep my Results variable in my original test set so that I can compare my machine learning results later on, I’ll create a new variable without the Results to ‘test’ my prediction mode while preserving my original test data. I will also remove the date and team names from my training and test set - as I will not need these variables when I make my predictions. Finally, I need to make sure that my Prediction variable is set as a factor, as well as the result, team names, and game length for the raw data analysis:
 
 ```
 test = dtest[,-4]
@@ -91,7 +91,6 @@ dt$Home = as.factor(dt$Home)
 dt$Away = as.factor(dt$Away)
 dt$Game_Length = as.factor(dt$Game_Length)
 ```
-
 
 
 # Analysis - Raw Data 
