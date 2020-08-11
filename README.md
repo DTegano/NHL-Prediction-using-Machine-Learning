@@ -49,7 +49,9 @@ I'll be the first to admit when I'm wrong about something. If you looked at part
 
 The plot above shows the plot relationship between home goals and blocked shots. Notice anything? Typically, we wouldn't expect to see much of a relationship between these two variables - goals are more known to have a relationship with shots on goal. You can't score if you don't shoot the puck. Blocked shots is a statistic used on the defensive side of the ice – we would almost expect to see a negative relationship since more blocked shots can indicate that a team is playing more in their defensive end than the offensive zone. However, since I used a cumulative sum for these stats, there is now a huge linear relationship between all of my predictor variables (since all of my stats are increasing with each other for every game). In the data science world, this is known as collinearity and there appears to be high amount in this case.
 
-To fix this problem, I had to go back to my raw data and apply the same scripting methods that I applied the first time around. However, this time I used a cumulative mean for all of my variables. With the new formatted data, we finally get the results that we would expect to see between these two variables:
+To fix this problem, I had to go back to my raw data and apply the same scripting methods that I applied the first time around. However, this time I used a cumulative mean for all of my variables. With the change, this alters how my data looks. For example, if predicting game 4 of the season for the Colorado Avalanche, let’s say they previously scored 3,2, and 4 goals. Instead of using a goal value of 9 goals, I would now predict the result of game 4 with a value of 3 goals – since that it average. While this still captures if a high-scoring team is more like to win or not, this also makes my data more scalable for when I use Machine Learning.
+
+With the new formatted data, we finally get the results that we would expect to see between these two variables:
 
 
 ```
