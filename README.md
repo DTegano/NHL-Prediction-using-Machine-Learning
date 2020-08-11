@@ -366,7 +366,7 @@ Aside from goals, shots <i>can</i> be considered the next greatest factor that c
 [1] "L" "W"
 ```
 
-For hits, it can go either way. Either the maximum amount of hits per game can cause a team to dominate their opponent physically, or too many hits in a game can distract the players from what's important - scoring goals and winning the game. As we can see at the maximum amount of hits (54 for the home team and 67 for the away team), the teams with those hit amounts won their games. With that said, would we expect to see teams with much less hits lose their games? Well, that doesn't seem to be the case here with hits. When we look at the lowest hit totals (4 for the home team and 2 for the away team), the home team actually won all of their games at 4 hits while the away teams split their games (1 win, 1 loss) at 2 hits. With this mixed bag of results, we can't yet see the impact that hits have on the result.
+For hits, it can go either way. Either the maximum amount of hits per game can cause a team to dominate their opponent physically, or too many hits in a game can distract the players from what is truly important - scoring goals and winning the game. As we can see at the maximum amount of hits (54 for the home team and 67 for the away team), the teams with those hit amounts won their games. With that said, would we expect to see teams with much less hits lose their games? Well, that doesn't seem to be the case here with hits. When we look at the lowest hit totals (4 for the home team and 2 for the away team), the home team actually won all of their games at 4 hits while the away teams split their games (1 win, 1 loss) at 2 hits. With this mixed bag of results, we cannot yet see the impact that hits have on the result.
 
 <b> Blocked Shots </b>
  
@@ -424,7 +424,7 @@ For hits, it can go either way. Either the maximum amount of hits per game can c
 [1] "W"
 ```
 
- Have we finally got some meaningful results when looking at the max and min values? Blocked shots has always been an underrated hockey factor in my mind and teams don't get enough credit when they do a good job of getting bodies in front of pucks. When we look at the max values (33 for both home and away), the teams won all of their games. When we look at the min values (2 for home and away), the teams lost of all of their games. Based on these facts, I'll assume that the amount of blocked shots can, in fact, influence the outcome of a hockey game.
+Have we finally got some meaningful results when looking at the max and min values? Blocked shots have always been an underrated hockey factor in my mind and teams don't get enough credit when they do a good job of getting bodies in front of pucks. When we look at the max values (33 for both home and away), the teams won all their games. When we look at the min values (2 for home and away), the teams lost of all their games. Based on these facts, I'll assume that the amount of blocked shots can, in fact, influence the outcome of a hockey game.
 
 <b> Corsi </b>
 
@@ -478,7 +478,7 @@ summary(df$Home_Corsi)
 [1] "W"
 ```
 
-Corsi has been a key stat in the NHL over the last decade when looking at team possession. However, at the max and min values, Corsi is a split decision. When the Carolina Hurrincanes dominated at a 74.8% Corsi, they won while the defending team (Tampa Lightning - 25.2%) lost that game. However, when Carolina also put up a League best 74.1% as the Away team, they lost to the Columbus Blue Jackets - who only held a Corsi % of 25.9%. With these results, we cannot yet confirm the impact of corsi on the results.
+Corsi has been a key stat in the NHL over the last decade when looking at team possession. However, at the max and min values, Corsi is a split decision. When the Carolina Hurrincanes dominated at a 74.8% Corsi, they won while the defending team (Tampa Lightning - 25.2%) lost that game. However, when Carolina also put up a League best 74.1% as the Away team, they lost to the Columbus Blue Jackets - who only held a Corsi % of 25.9%. With these results, similar to shots and hits, we cannot yet confirm the impact of corsi on the results based on the min-max values.
 
 <b> Offensive Zone Start Percentage </b>
 
@@ -533,7 +533,7 @@ summary(df$Home_OFS)
 [1] "L"
 ```
 
-Finally, I'll conclude this max-min comparison with the often overlooked Offensive Zone Start %. While we would expect this to have a positive impact on the outcome of a game, would this actually have a negative impact (crazy, I know, but run with me for a second)? The highest Offensize Zone start % on the last 3 years was 86.5% for any home team and 82.8% for any away team. The teams that put  up these numbers, the Columbus Blue Jackets and Nashville Predators, lost both of these games to the teams who put up the lowest Offensize Start %s over the last 3 years.
+Finally, I'll conclude this max-min comparison with the often-overlooked Offensive Zone Start %. While we would expect this to have a positive impact on the outcome of a game, would this actually have a negative impact (crazy, I know, but I don’t make up the data) instead? The highest Offensive Zone start % on the last 3 years was 86.5% for any home team and 82.8% for any away team. The teams that put up these numbers, the Columbus Blue Jackets and Nashville Predators, lost both of these games to the teams who put up the lowest Offensive Start %s over the last 3 years. Since there can only be a 100% share of offensive zone starts in a game, this means that the lowest offensive zone start %s (as shown in the data above) simultaneously won their games. In order to understand the true impact of this variable, I’ll need to dig a bit deeper.
 
 # Analysis - Aggregated Data
 
