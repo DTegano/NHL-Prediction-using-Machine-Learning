@@ -1,10 +1,10 @@
 # NHL Prediction using Machine Learning
 
-<b> Project Background: </b> Using prior NHL seasons for my training data, I will predict the 2019-2020 NHL games using a few different Machine Learning Models. I will treat this as a binary classification problem and predict two categories: win, or loss based on the outcome of the home team. My variables will include: Date of the game, Home Team, Away Team (date and team names will be removed for machine learning but will be present for exploratory analysis), Result (training only - reflects Home Team), Home Goals, Home Shots, Home PIM (Penalties in Minutes), Away Goals, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters (reflects empty net goals for the winning team), Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. 
+<b> Project Background: </b> Using the 2017-2018 and 2018-2019 seasons as my training data*, I will predict the 2019-2020 NHL games using a few different Machine Learning Models. I will treat this as a binary classification problem and predict two categories: win, or loss based on the outcome of the home team. My variables will include: Date of the game, Home Team, Away Team (date and team names will be removed for machine learning but will be present for exploratory analysis), Result (training only - reflects Home Team), Home Goals, Home Shots, Home PIM (Penalties in Minutes), Away Goals, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters (reflects empty net goals for the winning team), Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. 
 
 This is part 2 of my main overall project. In order to predict games, the NHL data needs to be structured in a specific way. If you're unfamiliar with this process or haven't read Part 1 of this project, please check out this link: https://github.com/DTegano/Web-Scraping-NHL-Data-for-Prediction-using-Machine-Learning
 
-
+<b> * Editor Note </b> Towards the end of my project when optimizing my model, I'll note that I added the 2015-2016 and 2016-2017 seasons as additional training data.
 # Libraries 
 
 Here are my libraries:
@@ -95,7 +95,7 @@ dt$Game_Length = as.factor(dt$Game_Length)
 
 # Analysis - Raw Data 
 
-Before conducting analysis, it's always a good idea to view the data and get familiar with its' contents before. Since I'm using R, it's also a good idea to attach your data set so that variables are much easier to call. Once this has been completed, one of the first commands you should run with a new data frame is the structure and summary functions. Since my teams and results loaded in as characters, I'll first change these variables to factors. It's also very important to deal with any missing values. I did already fix all of my missing values in Part 1, but it still can't hurt to check just in case:
+Before conducting analysis, it's always a good idea to view the data and get familiar with its' contents. Since I'm using R, it's also a good idea to attach your data set so that variables are much easier to call. Once this has been completed, one of the first commands you should run with a new data frame is the structure and summary functions. Since my teams and results variables loaded in as characters, I'll first change these variables to factors. It's also very important to deal with any missing values. I did already fix all of my missing values in Part 1, but it still can't hurt to check just in case:
 
 ```
  table(is.na(dt))
@@ -105,7 +105,7 @@ Before conducting analysis, it's always a good idea to view the data and get fam
 ```
 
 
-Once the change has been made, here are the corresponding strucutre and summary commands:
+Once the change has been made, here are the corresponding structure and summary commands:
 
 ``` 
 > str(dt)
@@ -240,7 +240,7 @@ Some interesting observations/notes from the 3 seasons worth of data: <p><p/>
 4. 87 Penalty minutes and 67 hits is the most we've seen in any game over the last 3 years.
 5. Neither the home or away team has recorded more than 33 blocked shots in a single game.
 
-Now, I'll look at a few different variables to see how much of an impact they have of the outcome of the game when the variable is maximized and minimized. The trend that I'm expecting here is that when the variable is maximized, we'd expect to see wins and when the varaible is minimized, we'd expect losses. Take goals for example - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals <u> almost </u> lost every game (I believe there were 1 or 2 shootout victories at 0-0).
+Now, I'll look at a few different variables to see how much of an impact they on the outcome when the variable is maximized and minimized. The trend that I'm expecting here (assuming a positive relationship) is that when the variable is maximized, we'd expect to see wins and when the variable is minimized, we'd expect losses. Take goals for example - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals <u> almost </u> lost every game (I believe there were 1 or 2 shootout victories at 0-0).
 
 For the following commands, I set up a quick function to return the name of the team, date, and result of the max-min value:
 
