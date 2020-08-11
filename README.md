@@ -49,7 +49,7 @@ I'll be the first to admit when I'm wrong about something. If you looked at part
 
 The plot above shows the plot relationship between home goals and blocked shots. Notice anything? Typically, we wouldn't expect to see much of a relationship between these two variables - goals are more known to have a relationship with shots on goal. You can't score if you don't shoot the puck. Blocked shots is a statistic used on the defensive side of the ice – we would almost expect to see a negative relationship since more blocked shots can indicate that a team is playing more in their defensive end than the offensive zone. However, since I used a cumulative sum for these stats, there is now a huge linear relationship between all of my predictor variables (since all of my stats are increasing with each other for every game). In the data science world, this is known as collinearity and there appears to be high amount in this case.
 
-To fix this problem, I had to go back to my raw data and apply the same scripting methods that I applied the first time around. However, this time I used a cumulative mean for all of my variables. With the change, this alters how my data looks. For example, if predicting game 4 of the season for the Colorado Avalanche, let’s say they previously scored 3,2, and 4 goals. Instead of using a goal value of 9 goals, I would now predict the result of game 4 with a value of 3 goals – since that it average. While this still captures if a high-scoring team is more like to win or not, this also makes my data more scalable for when I use Machine Learning.
+To fix this problem, I had to go back to my raw data and apply the same scripting methods that I applied the first time around. However, this time I used a cumulative mean for all of my variables. With the change, this alters how my data looks. For example, if predicting game 4 of the season for the Colorado Avalanche, let’s say they previously scored 3,2, and 4 goals. Instead of using a goal value of 9 goals, I would now predict the result of game 4 with a value of 3 goals – since that it average. While this still captures if a high-scoring team is more like to win or not, this also makes my data more scalable for when I use machine learning.
 
 With the new formatted data, we finally get the results that we would expect to see between these two variables:
 
@@ -66,7 +66,7 @@ A correlation value of 0.064 makes much more sense than the 0.959 value between 
 
 # Importing the Data
 
-As we can see from the above, my machine learning data set will be imported into R as "Dtrain" and "Dtest". However, I also think there is a lot of value of also looking at the raw data - which is the data that shows each game's stats and results before they were manipulated into an aggregated data set. For this raw data, I'll import both my training and test set and combine both sets into one data frame called "dt"  (I've always gotten into the habit of using dt for 'data table' and because my initials happen to be dt):
+As we can see from the above, my machine learning data set will be imported into R as "Dtrain" and "Dtest". However, I think there is a lot of value of also looking at the raw data - which is the data that shows each game's stats and results before they were manipulated into an aggregated data set. For this raw data, I'll import both my training and test set and combine both sets into one data frame called "dt"  (I've always gotten into the habit of using dt for 'data table' and because my initials happen to be dt):
 
 ```
 dtrain = read_excel("Training Final CM.xlsx", col_names = TRUE)
@@ -79,7 +79,7 @@ raw_2020 = read_excel("2019-2020 Test Base.xlsx", col_names = TRUE)
 dt = rbind(raw_2018, raw_2019, raw_2020)
 ```
 
-Once I have combined my training set with my entire test set, I'll create a new set and remove the Results column from my test set - as this will be the variable we will be predicting. Since I want to keep my Results variable in my original test set so that I can compare my machine learning results later on, I’ll create a new variable without the Results to ‘test’ my prediction mode while preserving my original test data. I will also remove the date and team names from my training and test set - as I will not need these variables when I make my predictions. Finally, I need to make sure that my Prediction variable is set as a factor, as well as the result, team names, and game length for the raw data analysis:
+Once I have combined my training set with my entire test set, I'll create a new set and remove the Results column from my test set - as this will be the variable we will be predicting. Since I want to keep my Results variable in my original test set so that I can compare my machine learning results later on, I’ll create a new variable without the Results to ‘test’ my prediction mode while preserving my original test data. I will also remove the date and team names from my training and test set - as I will not need these variables when I make my predictions. Finally, I need to make sure that my prediction variable is set as a factor, as well as the result, team names, and game length for the raw data analysis:
 
 ```
 test = dtest[,-4]
