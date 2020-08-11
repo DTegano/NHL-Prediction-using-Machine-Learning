@@ -245,7 +245,7 @@ Some interesting observations/notes from the 3 seasons worth of data: <p><p/>
 4. 87 Penalty minutes and 67 hits is the most we've seen in any game over the last 3 years.
 5. Neither the home or away team has recorded more than 33 blocked shots in a single game.
 
-Now, I'll look at a few different variables to see how much of an impact they on the outcome when the variable is maximized and minimized. The trend that I'm expecting here (assuming a positive relationship) is that when the variable is maximized, we'd expect to see wins and when the variable is minimized, we'd expect losses. Take goals for example - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals <u> almost </u> lost every game (I believe there were 1 or 2 shootout victories at 0-0).
+Now, I'll look at a few different variables to see how much of an impact they on the outcome when the variable is maximized and minimized. The trend that I'm expecting here (assuming a positive relationship) is that when the variable is maximized, we'd expect to see wins and when the variable is minimized, we'd expect losses. Take goals for example - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals lost <u> almost </u> every game (I believe there were 1 or 2 shootout victories at 0-0).
 
 For the following commands, I set up a quick function to return the name of the team, date, and result of the max-min value:
 
