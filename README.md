@@ -756,7 +756,7 @@ Let's take a moment to digest this information. With the number of variables and
 
 <b> Away Points </b>
 
-Since this was the strongest correlation to the outcome of a game, we'll start looking at correlations with this variable - as well as a regresion.
+Since this was the strongest correlation to the outcome of a game, we'll start looking at correlations with this variable - as well as a regression.
 
 ```
 > head(away_points_cor)
@@ -835,7 +835,7 @@ Multiple R-squared:  0.8818,	Adjusted R-squared:  0.8816
 F-statistic:  6844 on 4 and 3671 DF,  p-value: < 2.2e-16
 ```
 
-Since PDO and shooting percentage is not signifant, I'll go ahead and run the model without those variables:
+Since PDO and shooting percentage is not significant, I'll go ahead and run the model without those variables:
 
 ```
 > model = lm(Away_P ~ Away_W + Away_DIF)
@@ -874,6 +874,7 @@ F-statistic: 1.365e+04 on 2 and 3673 DF,  p-value: < 2.2e-16
 
 <img src = "https://user-images.githubusercontent.com/39016197/88122490-fb929d00-cb85-11ea-8b02-0c53d69ded02.png" width = 410 height = 250>
 <img src = "https://user-images.githubusercontent.com/39016197/88122511-0f3e0380-cb86-11ea-9ba5-1b90c641f3c6.png" width = 410 height = 250>
+
 According to the regression model, a one unit increase in wins increasing points by (1.0769) and a one unit increase in differential increases points by 0.14. It's good to see both variables having a positive relationship with points, and both make sense.
 
 Finally, when we look at the differential and win rate together in a plot, it makes sense that there would be a correlation with the points variable:
@@ -889,7 +890,7 @@ dt_away %>%
 
 <b> Away Save % </b>
 
-To wrap up this section, I'll run the same commands as points, but for save %.
+To wrap up this section, I'll run the same commands as I did for points, but for save %.
 
 ```
 > away_save_cor = cor(dt_away[, unlist(lapply(dt_away, is.numeric))])
@@ -913,9 +914,10 @@ To wrap up this section, I'll run the same commands as points, but for save %.
 -0.26007001 -0.85985466 
 ```
 
-I'll note that the strongest correlation here is the negative relation with goals against - which makes complete sense. PDO doesn't surprise me since save % is part of that calculation, differential is related since a save % is more likely to have a positive differential, points and wins are also straight forward. I'm surprised that shots against didn't have a stronger corrlation, but I'm even more surprised that there isn't a strong correlation with blocked shots. Blocked shots can prevent goals, but also prevents shots on goal that would count toward a save, so I guess the lower correlation (0.169) isn't all that far off.
+I'll note that the strongest correlation here is the negative relation with goals against - which makes complete sense. PDO doesn't surprise me since save % is part of that calculation, differential is related since a save % is more likely to have a positive differential, points and wins are also straight forward. I'm surprised that shots against didn't have a stronger correlation, but I'm even more surprised that there isn't a strong correlation with blocked shots. Blocked shots can prevent goals, but also prevents shots on goal that would count toward a save, so I guess the lower correlation (0.169) isn't all that far off.
 
-For my regression, I'll include the strong correlation variables and will also initally include blocked shots:
+For my regression, I'll include the strong correlation variables and will also initially include blocked shots:
+
 
 ```
 > model = lm(Away_SV ~ Away_PDO + Away_P + Away_W + Away_SA + Away_GA + Away_BS)
@@ -1000,7 +1002,7 @@ dt_away %>%
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/88235330-e118fc00-cc37-11ea-95ab-b6ded30a78da.png" width = 510 height = 350>
 
-Finally, you can see that a high save % is usually found at the higher end of points per game (despite the negative correlation) and average win per game. I'll note that the linear regression fit line has a steeper slope for the save % values below the mean - which does *not* mean that winning with a lower save %, ov average, results in more points on average. The regression line is simply a best fitting line based on the data - which can be skewed from the few outliers that we see in the plot. In fact, if we look back at the raw data, we'll see that a higher save % certainly results in more points: 
+Finally, you can see that a high save % is usually found at the higher end of points per game (despite the negative correlation) and average win per game. I'll note that the linear regression fit line has a steeper slope for the save % values below the mean - which does *not* mean that winning with a lower save %, on average, results in more points on average. The regression line is simply a best fitting line based on the data - which can be skewed from the few outliers that we see in the plot. In fact, if we look back at the raw data, we'll see that a higher save % certainly results in more points: 
 
 ```
 > sum(dt$Home_P[dt$Home_SV>mean(dt$Home_SV)])
@@ -1017,7 +1019,7 @@ Finally, you can see that a high save % is usually found at the higher end of po
 ```
 # Predicting
 
-Finally, the section you've been waiting for! Is it possible to reasonably predict NHL games based on the data I've collected? Well, we're about to find out! First, I'll beging with a basic logistic regression - I'll note that I  don't have high hopes for a good accuracy on this model. I'll then look at some of the more complex models, such as SVM and ANN, to try to get my accuracy as high as possibe. 
+Finally, the section you've been waiting for! Is it possible to reasonably predict NHL games based on the data I've collected? Well, we're about to find out! First, I'll begin with a basic logistic regression - I'll note that I don't have high hopes for a good accuracy on this model. I'll then look at some of the more complex models, such as SVM and ANN, to try to get my accuracy as high as possible.
 
 # Logistic Regression 
 
@@ -1103,9 +1105,10 @@ Number of Fisher Scoring iterations: 5
 ```
 
 
-The family needs to be binomial since I'm predicting a categorical variable with only 2 options. Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change for different variables. Nornally, you would want to remove all of the statistically insignificant variables out of the model until you only have p-values less than the confidence interval picked. However, I believe that I'll need more variables than the few that are significant above to get much success out of this regression.
+The family needs to be binomial since I'm predicting a categorical variable with only 2 options. Based on the above, there's only a handful of variables that are statistically significant enough to even consider keeping in my model. But as variables get removed, the p-values will begin to change for different variables. Normally, you would want to remove all of the statistically insignificant variables out of the model until you only have p-values less than the confidence interval picked. However, I believe that I'll need more variables than the few that are significant above to get much success out of this regression.
 
 For comparison purposes, I'll still predict using the full variables set:
+
 
 ```
 > pred = predict(logistic, newdata = test, type = "response")
@@ -1139,11 +1142,12 @@ For comparison purposes, I'll still predict using the full variables set:
 [1] 0.5628466
 ```
 
-I set up a prediction variable 'pred', that was set up as a response type since I wanted to see the fitted values (since the residual values wouldn't help me narrow this down into 2 categories). Then, I needed to round the fitted variables so that I have either a 0 or 1. While I  could change my results variable to a binary, numeric variable, I left it as it is since I know that 0 is "L" and 1 is "W".  I'll also note that I predicted the model on my test set instead of dtest, since I'll leave dtest how it is so that I havea way to compare the results (recall that test is dtest without the labels). Once everything has been set up correclty, I ran a table to check my results. First, I looked at the recall ('recal') to see that it is 0.759 - which is not bad actually. However, as most data scientists understand, having a good recall doesn't mean that the model is any good. On the flip side of that, the recall for the "L" category is only 0.339. Looking at the precision (again for wins), we only see 0.567. Even worse, our accuracy for the entire model is only 56.3%. Let's hope we can do better than that with at least one of the logistic regressions below.
+I set up a prediction variable 'pred', that was set up as a response type since I wanted to see the fitted values (since the residual values wouldn't help me narrow this down into 2 categories). Then, I needed to round the fitted variables so that I have either a 0 or 1. While I  could change my results variable to a binary, numeric variable, I left it as it is since I know that 0 is "L" and 1 is "W".  I'll also note that I predicted the model on my test set instead of dtest, since I'll leave dtest how it is so that I have a way to compare the results (recall that test is dtest without the labels). Once everything has been set up correctly, I ran a table to check my results. First, I looked at the recall ('recal') to see that it is 0.759 - which is not bad. However, as most data scientists understand, having a good recall doesn't mean that the model is any good. On the flip side of that, the recall for the "L" category is only 0.339. Looking at the precision (again for wins), we only see 0.567. Even worse, our accuracy for the entire model is only 56.3%. Let's hope we can do better than that with at least one of the logistic regressions below.
 
 <b> Goals only </b>
 
 Below is a logistic model when looking *only* at the goal variables for each team:
+
 
 ```
 > logistic = glm(Result ~ Home_Goals + Away_Goals, data = dtrain, family = "binomial")
@@ -1209,13 +1213,14 @@ Number of Fisher Scoring iterations: 4
 [1] 0.5341959
 ```
 
-Let's look at the above model. My first impression is that the goal coefficients are correct - home team goals increase the log odds (since the result is based on the home team) while away goals hurt the chances of a home win. While away goals was not statistically significant when every variable was included, it is now significant since there are only 2 variables included in this model. Once the model was run, I first looked at the recall - which is a whopping 91.68% when we look at the number of "W"s predicted correctly! Of course, having a high recall for "W"s means that I have an extremely low recall for "L" (about 9.7%).  When looking at the precision of "W"s, it was only 53.7%. When looking at the whole accuracy for the model, I only was able to correctly predict 53.42% (I can guess games much better than that rate).
+Let's look at the above model. My first impression is that the goal coefficients are correct - home team goals increase the log odds (since the result is based on the home team) while away goals hurt the chances of a home win. While away goals were not statistically significant when every variable was included, it is now significant since there are only 2 variables included in this model. Once the model was run, I first looked at the recall - which is a whopping 91.68% when we look at the number of "W"s predicted correctly! Of course, having a high recall for "W"s means that I have an extremely low recall for "L" (about 9.7%).  When looking at the precision of "W"s, it was only 53.7%. When looking at the whole accuracy for the model, I only was able to correctly predict 53.42% (I can guess games much better than that rate).
 
 <b> Best Linear Model? </b>
 
-After experimenting with what variables I think should be in the regression and what variables should not be, I believe I came up with the best possible linear model with the data I have. I'll note that most of the core stats was able to stay in the model - which includes goals, shots, corsi, hits, blocked shots, differential, wins, points, save %, and shooting %. The surpirse variables that also stayed include empty net goals and penalty minutes - which makes me glad that I was able to decipher out the empty net goals with my web scraper and create a separate column. PDO, which is save % + shooting %, was able to stay in the model as long as it could - but ultimately, it was the last variable removed to get the best accuracy possible. I'll also note that all of my "against" variables, such as goals against, shots against, didn't have much weight in the logistic regresion, but I'm still hoping these will come in handy when I move on to the SVM and ANN models. 
+After experimenting with which variables I think should be in the regression and which variables should not be, I believe I came up with the best possible linear model with the data I have. I'll note that most of the core stats was able to stay in the model - which includes goals, shots, corsi, hits, blocked shots, differential, wins, points, save %, and shooting %. The surprise variables that also stayed include empty net goals and penalty minutes - which makes me glad that I was able to decipher out the empty net goals with my web scraper and create a separate column. PDO, which is save % + shooting %, was able to stay in the model as long as it could - but ultimately, it was the last variable removed to get the best accuracy possible. I'll also note that all of my "against" variables, such as goals against, shots against, didn't have much weight in the logistic regression, but I'm still hoping these will come in handy when I move on to the SVM and ANN models. 
 
-Here is the best linear logistic model I can create with this data set: 
+Here is the best linear logistic model I can create with this data set:
+
 
 ```
 > summary(logistic)
@@ -1362,7 +1367,7 @@ ggplot(mydata, aes(logit, predictor.value)) + geom_point(size = 0.5, alpha = 0.5
 
 <img src = "https://user-images.githubusercontent.com/39016197/88611171-b4a11d80-d045-11ea-830c-79873d980c3e.png" width = 450 height = 320>
 
-After reviewing the variables, it did appear that other variables also had a polynomial shaped curve, but ultimately, changing those variables as polynomial made the model worse except for the 4 shown above. By adding a 2nd degree polynomial curve to home shots, penalty minutes, and away wins, as well as adding a 3rd degree to away points, I get get the best possible accuracy of 57.95%.  
+After reviewing the variables, it did appear that other variables also had a polynomial shaped curve, but ultimately, changing those variables as polynomial made the model worse except for the 4 shown above. By adding a 2nd degree polynomial curve to home shots, penalty minutes, and away wins, as well as adding a 3rd degree to away points, I get the best possible accuracy of 57.95%.  
 
 ```
 > poly = glm(Result ~ Home_Goals + Away_Goals + poly(Home_Shots, deg=2) + Away_Shots + poly(Home_PIM, deg=2) + Away_PIM + Home_Corsi + Away_Corsi + Home_HT + Away_HT + Home_EN + Away_EN + Home_BS + Away_BS + Home_SH + Away_SH + Home_DIF + Away_DIF + Home_W + poly(Away_W, deg=2) + Home_P + poly(Away_P, deg=3) + Home_SV + Away_SV, dtrain, family = "binomial")
@@ -1406,7 +1411,7 @@ Prediction   0   1
        'Positive' Class : 0 
 ```
 
-I'll also note the concerning low kappa coefficient - which is in the range of 'poor.' For those who are not familar, the kappa coefficient adjusts accuracy by accounting for the change of the model simply guessing correctly. The R^2 is also extremely low 0.023 for my best model and only 0.298 when all 45 (only the ones used for machine learning) varaibles are present. This may hint that either the logistic model is the complete wrong model to use, or there are just simply to many factors in hockey to predict games accurately. Below is an easy way to calculate R^2 on a logistic regression. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
+I'll also note the concerning low kappa coefficient - which is in the range of 'poor.' For those who are not familiar, the kappa coefficient adjusts accuracy by accounting for the change of the model simply guessing correctly. The R^2 is also extremely low 0.023 for my best model and only 0.298 when all 45 (only the ones used for machine learning) variables are present. This may hint that either the logistic model is the complete wrong model to use, or there are just simply to many factors in hockey to predict games accurately. Below is an easy way to calculate R^2 on a logistic regression. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
 
 ```
 > log_likelihood_null = poly$null.deviance/-2
@@ -1487,12 +1492,11 @@ pred   L   W
 
 <img src = "https://user-images.githubusercontent.com/39016197/88880951-4eee9600-d1eb-11ea-8b6a-0833311c804e.png" width = 450 height = 320>
 
-You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improced by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring. Nonetheless, these are the variables that work best with this model. Even normalizing and scaling the data couldn't yield better resuslts. After many attempts, I couldn't get the SVM to even beat the logistic regression. On to the Neural Network.
+You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improved by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring. Nonetheless, these are the variables that work best with this model. Even normalizing and scaling the data couldn't yield better results. After many attempts, I couldn't get the SVM to even beat the logistic regression. On to the Neural Network.
 
 # Neural Network
 
-To start, I'll run a neural network model, with all of the varibles, using the neural net package. I don't expect good results for this model for several reasons: 1) I prefer running neural networks using the keras/tensorflow packages, 2) many of the activation & optimizer functions, as well as the input/output layers, can't be modified here and 3) The only real reason to run this model is to show a plot example, since this is not currently an option for the keras/tf packages. I'll note that I'll need to first normalize my data before running the model:
-
+To start, I'll run a neural network model, with all of the variables, using the neural net package. I don't expect good results for this model for several reasons: 1) I prefer running neural networks using the keras/tensorflow packages, 2) many of the activation & optimizer functions, as well as the input/output layers, can't be modified here and 3) The only real reason to run this model is to show a plot example, since this is not currently an option for the keras/tf packages. I'll note that I'll need to first normalize my data before running the model:
 ```
 dtrain_norm = as.data.frame(lapply(dtrain[,2:45], normalize))
 
@@ -1663,7 +1667,7 @@ model %>% plot_model()
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/89111757-d704b380-d416-11ea-82c7-c83908d6c0ea.png" width = 450 height = 400>
 
-Notice that the architecture is quite different than what the first model looked like (excluding node count). I'll also get to choose my loss, optimizer (both availbe in the first model, but not as effective) and metrics. I'll run 40 epochs with batch sample sizes of 32, and a validation set at 20% of my training data (which does reduce the overall size of my traininig data).
+Notice that the architecture is quite different than what the first model looked like (excluding node count). I'll also get to choose my loss, optimizer (both available in the first model, but not as effective) and metrics. I'll run 40 epochs with batch sample sizes of 32, and a validation set at 20% of my training data (which does reduce the overall size of my training data).
 
 ```
 > model %>%
