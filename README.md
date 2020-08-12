@@ -1033,7 +1033,7 @@ I'll recall from the above that I'm using "Dtrain" as my training set and "Dtest
 2. There should not be any outliers in any continuous variables
 3. No high multicollinearity among the predictor variables
 
-I already know that there is high multicollinearity among some of these variables (take PDO for example, which is the direct calculation of save % and shooting %), so I'll need to make sure that some of these variables are removed. However, before I get to that step, I'll first run a logistic regression with how my data currently is:
+I already know that there is high multicollinearity among some of these variables (take PDO for example, which is the direct calculation of save % and shooting %), so I'll need to make sure that some of these variables are removed. However, before I get to that step, I'll first run a logistic regression with all of my variables for comparison:
 
 ```
 > attach(dtrain)
