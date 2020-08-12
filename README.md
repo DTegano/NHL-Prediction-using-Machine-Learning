@@ -997,7 +997,7 @@ Multiple R-squared:  0.9502,	Adjusted R-squared:  0.9501
 F-statistic: 1.401e+04 on 5 and 3670 DF,  p-value: < 2.2e-16
 ```
 
-Well, that didn't last long. Blocked shots had an enormous p-value, and did not have any statistically significant weight compared to the other stats. While Goals against isn't surprising when looking at the negative relationships, I am shocked that points has a negative relationship. For every one unit increase in points, save % is expected to drop by 0.01259 - which isn't a big change, but still interesting to see. You would expect to see good goaltending save % that results in more points.
+Well, that didn't last long. Blocked shots had an enormous p-value, and did not have any statistically significant weight compared to the other stats. You can see that this variable was dropped and the model was re-run. While Goals against isn't surprising when looking at the negative relationships, I am shocked that points has a negative relationship. For every one unit increase in points, save % is expected to drop by 0.01259 - which isn't a big change, but still interesting to see. You would expect to see good goaltending save % that results in more points.
 
 ```
 dt_away %>%
