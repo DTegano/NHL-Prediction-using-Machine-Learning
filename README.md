@@ -1841,3 +1841,96 @@ Prediction   L   W
 ```
 Obviously, this is much better than the first nueural network model, but still room for plenty of improvement.
 
+# Troubleshoot
+
+With the above results, what exactly went wrong here? Did I not have the correct variables? Did I not have enough data? Or is predicting using a cumulative mean a poor way to approach these preditions? Well, there's one way I can at least narrow down my options - and that's running the predictions with my raw data.
+
+I know what you're thinking, and believe me, I share your concern. Using my raw data means that I'm using real stats from each game - including goals scored! It would be a no-brainer for my model to get 100% accuracy. But what if I removed the obvious stats that would give away the outcome of the game, such as: Goals, Empty Netters, Goals Against, Differential, Points, Wins, etc. In fact, I'll only keep 20 variables that can be unrelated, more or less, to the result:
+
+<img src = "https://user-images.githubusercontent.com/39016197/89972318-c4f6f200-dc1a-11ea-9b00-c9713e2bba17.png" width = 1600 height = 350>
+
+Using the same API neural network as my optimized model above, but with less neurons, I'm finally able to achieve significant results:
+
+```
+model = NULL
+
+model <- local({
+  input = layer_input(shape = c(20), name = 'main_input')
+  
+  layer1 = input %>%
+    layer_dense(units = 10, activation = "relu")
+  
+  layer2 = input %>%
+    layer_dense(units = 10, activation = "relu")
+  
+  output = layer_concatenate(c(layer1, layer2)) %>%
+    layer_dropout(0.5) %>%
+    layer_batch_normalization() %>%
+    layer_dense(units = 10, activation = "relu") %>%
+    layer_dense(units = 2, activation = "sigmoid", name = 'main_outout')
+  
+  keras_model(inputs = input, outputs = output)
+})
+
+# compile
+model %>%
+  compile(loss = "binary_crossentropy",
+          optimizer = optimizer_adam(lr=.0001),
+          metrics = "accuracy")
+
+history = model %>%
+  fit(train,
+      trainLabels,
+      epoch = 100,
+      batch_size = 100,
+      validation_split = 0.2)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/89971624-06869d80-dc19-11ea-8551-48e5a3d2a49b.png" width = 600 height = 500>
+
+```
+ prob = model %>%
++   predict_on_batch(test)
+
+> pred = ifelse(model$predict(test)[,1]>model$predict(test)[,2], 0,1)
+
+> table(Predicted = pred, Actual = testtarget)
+         Actual
+Predicted   0   1
+        0 473  17
+        1  32 560
+
+> Results = ifelse(pred==1, "W", "L")
+
+> Results = as.factor(Results)
+
+> confusionMatrix(ttest$Result, Results, positive = "W")
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   L   W
+         L 473  32
+         W  17 560
+                                          
+               Accuracy : 0.9547          
+                 95% CI : (0.9406, 0.9663)
+    No Information Rate : 0.5471          
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.9089          
+                                          
+ Mcnemar's Test P-Value : 0.0455          
+                                          
+            Sensitivity : 0.9459          
+            Specificity : 0.9653          
+         Pos Pred Value : 0.9705          
+         Neg Pred Value : 0.9366          
+             Prevalence : 0.5471          
+         Detection Rate : 0.5176          
+   Detection Prevalence : 0.5333          
+      Balanced Accuracy : 0.9556          
+                                          
+       'Positive' Class : W   
+```
+
+As we can see, knowing only 20 of the variables for each yields a very high accuracy. In fact, as we see from the validation loss, running additional epochs can easily get this accuracy into the 98-99% range. 
