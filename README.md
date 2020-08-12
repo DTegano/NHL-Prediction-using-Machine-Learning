@@ -543,7 +543,7 @@ Finally, I'll conclude this max-min comparison with the often-overlooked Offensi
 
 Here we are moving away from our raw data to our aggregated data - with each game representing the team's average stats for each variable <i>prior</i> to that game being played. This is the same data I'll use for the rest of this analysis portion and will predict games with.
 
-To begin, I'll start running a few different tests to compare the home and away data. It's worth exploring since I want to know whether home ice has an advantage (or has a weight when it comes to predicting) - in data science terms, I want to see if there is a statistically significant difference between home and away variables.
+To begin, I'll start running a few different tests to compare the home and away data. It's worth exploring since I want to know whether home ice has an advantage (or has a weight when it comes to predicting). In data science terms, I want to see if there is a statistically significant difference between home and away variables.
 
 <b> Goals </b>
 
