@@ -1855,21 +1855,21 @@ Using the same API neural network as my optimized model above, but with less neu
 model = NULL
 
 model <- local({
-  input = layer_input(shape = c(20), name = 'main_input')
-  
-  layer1 = input %>%
-    layer_dense(units = 10, activation = "relu")
-  
-  layer2 = input %>%
-    layer_dense(units = 10, activation = "relu")
-  
-  output = layer_concatenate(c(layer1, layer2)) %>%
-    layer_dropout(0.5) %>%
-    layer_batch_normalization() %>%
-    layer_dense(units = 10, activation = "relu") %>%
-    layer_dense(units = 2, activation = "sigmoid", name = 'main_outout')
-  
-  keras_model(inputs = input, outputs = output)
+    input = layer_input(shape = c(14), name = 'main_input')
+    
+    layer1 = input %>%
+        layer_dense(units = 10, activation = "relu")
+    
+    layer2 = input %>%
+        layer_dense(units = 10, activation = "relu")
+    
+    output = layer_concatenate(c(layer1, layer2)) %>%
+        layer_dropout(0.5) %>%
+        layer_batch_normalization() %>%
+        layer_dense(units = 10, activation = "relu") %>%
+        layer_dense(units = 2, activation = "sigmoid", name = 'main_outout')
+    
+    keras_model(inputs = input, outputs = output)
 })
 
 # compile
@@ -1881,15 +1881,34 @@ model %>%
 history = model %>%
   fit(train,
       trainLabels,
-      epoch = 100,
+      epoch = 165,
       batch_size = 100,
       validation_split = 0.2)
 ```
 
-<img src = "https://user-images.githubusercontent.com/39016197/89971624-06869d80-dc19-11ea-8551-48e5a3d2a49b.png" width = 600 height = 500>
+<img src = "https://user-images.githubusercontent.com/39016197/90059346-40e74d80-dca0-11ea-8b79-abece096a089.png" width = 600 height = 500>
 
 ```
- prob = model %>%
+ model %>%
++   evaluate(test, testLabels)
+1082/1082 [==============================] - 0s 23us/sample - loss: 0.1710 - accuracy: 0.9524
+$loss
+[1] 0.1709769
+
+$accuracy
+[1] 0.9524029
+
+> max_val_acc  = order(history$metrics$val_accuracy, decreasing = TRUE)
+
+> epoch = max_val_acc[1] 
+
+> epoch
+[1] 157
+
+> history$metrics$val_accuracy[epoch]
+[1] 0.9547206
+
+> prob = model %>%
 +   predict_on_batch(test)
 
 > pred = ifelse(model$predict(test)[,1]>model$predict(test)[,2], 0,1)
@@ -1897,8 +1916,8 @@ history = model %>%
 > table(Predicted = pred, Actual = testtarget)
          Actual
 Predicted   0   1
-        0 473  17
-        1  32 560
+        0 480  24
+        1  25 553
 
 > Results = ifelse(pred==1, "W", "L")
 
@@ -1909,26 +1928,26 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction   L   W
-         L 473  32
-         W  17 560
+         L 480  25
+         W  24 553
                                           
                Accuracy : 0.9547          
                  95% CI : (0.9406, 0.9663)
-    No Information Rate : 0.5471          
+    No Information Rate : 0.5342          
     P-Value [Acc > NIR] : <2e-16          
                                           
-                  Kappa : 0.9089          
+                  Kappa : 0.909           
                                           
- Mcnemar's Test P-Value : 0.0455          
+ Mcnemar's Test P-Value : 1               
                                           
-            Sensitivity : 0.9459          
-            Specificity : 0.9653          
-         Pos Pred Value : 0.9705          
-         Neg Pred Value : 0.9366          
-             Prevalence : 0.5471          
-         Detection Rate : 0.5176          
+            Sensitivity : 0.9567          
+            Specificity : 0.9524          
+         Pos Pred Value : 0.9584          
+         Neg Pred Value : 0.9505          
+             Prevalence : 0.5342          
+         Detection Rate : 0.5111          
    Detection Prevalence : 0.5333          
-      Balanced Accuracy : 0.9556          
+      Balanced Accuracy : 0.9546          
                                           
        'Positive' Class : W   
 ```
