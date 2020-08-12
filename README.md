@@ -1427,7 +1427,7 @@ I'll also note the concerning low kappa coefficient - which is in the range of '
 
 # Support Vector Machine
 
-Unfortunately, the Support Vector Machine was more disappointing than the logistic regression. Since this repository is already so long, I'll keep this section simple and will get straight to the modeling:
+While the Support Vector Machine is a more complex model than the logistic regression and often hsa more prediciton power, I'll note earlier than I do not believe the SVM will predict better than my nueral network. Why? Well, if you understand how a SVM uses a hyperplace to separate groups, you'll understand why this may not be the greatest model for my almost-randomized data:
 
 ```
 #SVM with only goal variables
@@ -1456,7 +1456,12 @@ Unfortunately, the Support Vector Machine was more disappointing than the logist
 [1] 0.5596556
 > acc
 [1] 0.5563771
+```
 
+Here
+
+
+```
 # Best model
 
 > svm_model = ksvm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_Corsi + Away_Corsi + Home_Corsi_A + Away_Corsi_A + Home_SA + Away_SA + Home_PIM_A + Away_PIM_A, data = dtrain, cost = 0.1, kpar=list(sigma=0.1))
