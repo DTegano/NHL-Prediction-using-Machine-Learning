@@ -1847,7 +1847,7 @@ With the above results, what exactly went wrong here? Did I not have the correct
 
 I know what you're thinking, and believe me, I share your concern. Using my raw data means that I'm using real stats from each game - including goals scored! It would be a no-brainer for my model to get 100% accuracy. But what if I removed the obvious stats that would give away the outcome of the game, such as: Goals, Empty Netters, Goals Against, Differential, Points, Wins, etc. In fact, I'll only keep 20 variables that can be unrelated, more or less, to the result:
 
-<img src = "https://user-images.githubusercontent.com/39016197/89972318-c4f6f200-dc1a-11ea-9b00-c9713e2bba17.png" width = 1600 height = 350>
+<img src = "https://user-images.githubusercontent.com/39016197/90059220-0b426480-dca0-11ea-8609-9eedcfceaa9d.png" width = 1600 height = 350>
 
 Using the same API neural network as my optimized model above, but with less neurons, I'm finally able to achieve significant results:
 
