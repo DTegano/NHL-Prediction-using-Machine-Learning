@@ -1427,8 +1427,7 @@ I'll also note the concerning low kappa coefficient - which is in the range of '
 
 # Support Vector Machine
 
-While the Support Vector Machine is a more complex model than the logistic regression and often hsa more prediciton power, I'll note earlier than I do not believe the SVM will predict better than my nueral network. Why? Well, if you understand how a SVM uses a hyperplace to separate groups, you'll understand why this may not be the greatest model for my almost-randomized data as we've previously have seen in other plots:
-
+While the Support Vector Machine is a more complex model than the logistic regression and often has more prediction power, I'll note earlier than I do not believe the SVM will predict better than my neural network. Why? Well, if you understand how a SVM uses a hyperplane to separate groups, you'll understand why this may not be the greatest model for my almost-randomized data as we've previously have seen in other plots:
 ```
 plot(dtrain$Home_Goals, dtrain$Away_Goals, col = dtrain$Result)
 ```
@@ -1464,7 +1463,9 @@ plot(dtrain$Home_Goals, dtrain$Away_Goals, col = dtrain$Result)
 [1] 0.5563771
 ```
 
-Here
+It's important to note here that many believe that your data should be normalized/scaled when using SVM - but I do not believe it is necessary for the SVM. In fact, when using scaled data, the above model dips down to 54% as opposed to the 55.6% that we see above. 
+
+Overall, the results were not kind to me with the SVM. Even after trying different variable combinations, different kernel methods, adjusting cost constraints and epsilon values, below is the best model I could muster:
 
 
 ```
@@ -1505,7 +1506,7 @@ pred   L   W
 
 <img src = "https://user-images.githubusercontent.com/39016197/88880951-4eee9600-d1eb-11ea-8b6a-0833311c804e.png" width = 450 height = 320>
 
-You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improved by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring. Nonetheless, these are the variables that work best with this model. Even normalizing and scaling the data couldn't yield better results. After many attempts, I couldn't get the SVM to even beat the logistic regression. On to the Neural Network.
+You may notice that the variables are a little different than the logistic regression. While the goals, shots and corsi variables are all the same, this model actually improved by adding a few of the "against" statistics - such as corsi against, shots against, and penalty minutes against. To me, these are variables that should be included in the model (as well as the other 47 variables I went through the trouble of collecting) since the first two variables are defensive weaknesses while the penalty minutes against opens up more power play opportunities for scoring. Nonetheless, these are the variables that work best with this model. After many attempts, I couldn't get the SVM to even beat the logistic regression. On to the Neural Network.
 
 # Neural Network
 
