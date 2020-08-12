@@ -1337,7 +1337,7 @@ Number of Fisher Scoring iterations: 4
 [1] 0.5730129
 ```
 
-The best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. While this is slightly disappointing, I still have hope that the more complex models can perform better. I'm also sharing below one of many graphs that can be completed with the logistic regression. As we can see, the predictions were all over the place - the model could have done almost just as well by flipping a coin for every game. On to the next model.
+The best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. I'm also sharing below one of many graphs that can be completed with the logistic regression. As we can see, the predictions were all over the place - the model could have done almost just as well by flipping a coin for every game.
 
 ```
 pred = predict(logistic, newdata = test, type = "response") # removed the rounding to see real value
@@ -1413,7 +1413,7 @@ Prediction   0   1
        'Positive' Class : 0 
 ```
 
-I'll also note the concerning low kappa coefficient - which is in the range of 'poor.' For those who are not familiar, the kappa coefficient adjusts accuracy by accounting for the change of the model simply guessing correctly. The R^2 is also extremely low 0.023 for my best model and only 0.298 when all 45 (only the ones used for machine learning) variables are present. This may hint that either the logistic model is the complete wrong model to use, or there are just simply to many factors in hockey to predict games accurately. Below is an easy way to calculate R^2 on a logistic regression. Let's hope that I have much better success with the Support Vector Machine and the Neural Network.
+I'll also note the concerning low kappa coefficient - which is in the range of 'poor.' For those who are not familiar, the kappa coefficient adjusts accuracy by accounting for the change of the model simply guessing correctly. The R^2 is also extremely low 0.023 for my best model and only 0.298 when all 45 (only the ones used for machine learning) variables are present. This may hint that either the logistic model is the complete wrong model to use, or there are just simply to many factors in hockey to predict games accurately. Below is an easy way to calculate R^2 on a logistic regression. Let's hope that I have much better success with the Support Vector Machine and the Neural Network. On to the next model.
 
 ```
 > log_likelihood_null = poly$null.deviance/-2
