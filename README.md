@@ -1427,7 +1427,13 @@ I'll also note the concerning low kappa coefficient - which is in the range of '
 
 # Support Vector Machine
 
-While the Support Vector Machine is a more complex model than the logistic regression and often hsa more prediciton power, I'll note earlier than I do not believe the SVM will predict better than my nueral network. Why? Well, if you understand how a SVM uses a hyperplace to separate groups, you'll understand why this may not be the greatest model for my almost-randomized data:
+While the Support Vector Machine is a more complex model than the logistic regression and often hsa more prediciton power, I'll note earlier than I do not believe the SVM will predict better than my nueral network. Why? Well, if you understand how a SVM uses a hyperplace to separate groups, you'll understand why this may not be the greatest model for my almost-randomized data as we've previously have seen in other plots:
+
+```
+plot(dtrain$Home_Goals, dtrain$Away_Goals, col = dtrain$Result)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/90063356-7d1dac80-dca6-11ea-825c-ca338b22339c.png" width = 450 height = 320>
 
 ```
 #SVM with only goal variables
