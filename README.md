@@ -1510,7 +1510,7 @@ You may notice that the variables are a little different than the logistic regre
 
 # Neural Network
 
-To start, I'll run a neural network model, with all of the variables, using the neural net package. I don't expect good results for this model for several reasons: 1) I prefer running neural networks using the keras/tensorflow packages, 2) many of the activation & optimizer functions, as well as the input/output layers, can't be modified here and 3) The only real reason to run this model is to show a plot example, since this is not currently an option for the keras/tf packages. I'll note that I'll need to first normalize my data before running the model:
+To start, I'll run a basic neural network model, with all of the variables, using the neural net package. I don't expect good results for this model for several reasons: 1) I prefer running neural networks using the keras/tensorflow packages, 2) many of the activation & optimizer functions, as well as the input/output layers, can't be modified here and 3) The only real reason to run this model is to show a plot example, since this is not currently an option for the keras/tf packages. Unlike the SVM, I definitely want to normalize my data before running a neural network model:
 ```
 dtrain_norm = as.data.frame(lapply(dtrain[,2:45], normalize))
 
@@ -1574,7 +1574,7 @@ plot(ann_model, col.hidden = 'darkgreen', col.hidden.synapse = 'darkgreen', col.
 
 <img src = "https://user-images.githubusercontent.com/39016197/89111358-22689300-d412-11ea-983a-c0db622d3e02.png" width = 600 height = 500>
 
-Despite how powerful the neural network is, these results aren't good. In my opinion, in order to run this correctly, I'll need to utilize the keras/tensorflow packages in R. Not only will this speed up the model time (I set the loss threshold high enough for the model to run only once since it not only takes a long time, but it constantly gets stuck at the same loss threshold - which causes the model to be invalid), but the ability to customize the neural network will be much more beneficial for getting good results.
+Despite how powerful the neural network is, these results aren't good. In my opinion, in order to run this correctly, I'll need to utilize the keras/tensorflow packages in R. Not only will this speed up the model time (I set the loss threshold high enough for the model to run only once since it not only takes a while to run, but it constantly gets stuck at the same loss threshold - which causes the model to be invalid), but the ability to customize the neural network will be much more beneficial for getting good results. Using the Keras package also has great visualization tools to compare the loss and accuracy of your training data to the loss and accuracy of your validation data.
 
 ```
 library(keras)
@@ -1582,7 +1582,7 @@ library(tensorflow)
 library(deepviz)
 library(magrittr)
 ```
-After installing the necessary packages, I can proceed with this 'upgraded' neural network model. I'll note that using the keras model with tensorflow will require a different set up than what I currently have. Essentially, I'll need to convert my data into a 2D tensor (also called a matrix) and one-hot encode my predictor variable.
+After installing the necessary packages, I can proceed with this 'upgraded' neural network model. I'll note that using the keras model with tensorflow will require a different set up than what I currently have. Essentially, I'll need to convert my data into a 2D tensor (also called a matrix) and one-hot encode my predictor variable. I'll then separate out my training and test labels.
 
 ```
 # Set up Model
@@ -1607,7 +1607,7 @@ testtarget = test[,1]
 train = train[, 2:45]
 test = test[, 2:45]
 
-trainLabels = to_categorical(traintarget) #check tf_config if issue
+trainLabels = to_categorical(traintarget) 
 testLabels = to_categorical(testtarget)
 
 head(testLabels)
