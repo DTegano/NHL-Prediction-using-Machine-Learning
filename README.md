@@ -1955,10 +1955,53 @@ history = model %>%
 <img src = "https://user-images.githubusercontent.com/39016197/90069153-1ea8fc00-dcaf-11ea-90d8-c991b1177b00.png" width = 600 height = 500>
 <img src = "https://user-images.githubusercontent.com/39016197/90069193-31bbcc00-dcaf-11ea-9163-6468000f78b1.png" width = 600 height = 500>
 
+```
+pred = ifelse(model$predict(test)[,1]>model$predict(test)[,2], 0,1)
+
+> table(Predicted = pred, Actual = testtarget)
+         Actual
+Predicted   0   1
+        0 215 144
+        1 290 433
+
+> Results = ifelse(pred==1, "W", "L")
+
+> Results = as.factor(Results)
+
+> confusionMatrix(ttest$Result, Results, positive = "W")
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   L   W
+         L 215 290
+         W 144 433
+                                         
+               Accuracy : 0.5989         
+                 95% CI : (0.569, 0.6283)
+    No Information Rate : 0.6682         
+    P-Value [Acc > NIR] : 1              
+                                         
+                  Kappa : 0.1794         
+                                         
+ Mcnemar's Test P-Value : 3.397e-12      
+                                         
+            Sensitivity : 0.5989         
+            Specificity : 0.5989         
+         Pos Pred Value : 0.7504         
+         Neg Pred Value : 0.4257         
+             Prevalence : 0.6682         
+         Detection Rate : 0.4002         
+   Detection Prevalence : 0.5333         
+      Balanced Accuracy : 0.5989         
+                                         
+       'Positive' Class : W
+```
+
+Based on the accuracy, this is my best model yet with this data. Despite exhaustive efforts to push past the 60% threshold, it seems I'm either stuck at a local or global minimum - meaning any changes to my weights results in a lesser accuracy.
 
 # Troubleshoot
 
-With the above results, what exactly went wrong here? Did I not have the correct variables? Did I not have enough data? Or is predicting using a cumulative mean a poor way to approach these predictions? Well, there's one way I can at least narrow down my options - and that's running the predictions with my raw data.
+With the above results, what exactly went wrong here? Did I not have the correct variables? Did I not have enough data? Is predicting using a cumulative mean a poor way to approach these predictions? Well, there's one way I can at least narrow down my options - and that's running the predictions with my raw data.
 
 I know what you're thinking, and believe me, I share your concern. Using my raw data means that I'm using real stats from each game - including goals scored! It would be a no-brainer for my model to get 100% accuracy. But what if I removed the obvious stats that would give away the outcome of the game, such as: Goals, Empty Netters, Goals Against, Differential, Points, Wins, etc. In fact, I'll only keep 14 variables that can be unrelated, more or less, to the result:
 
@@ -2070,5 +2113,13 @@ Prediction   L   W
 
 As we can see, knowing only 14 of the variables for each yields a very high accuracy - and this is without even optimizing my model. Based on the validation loss, running additional epochs with more/less neurons and hidden layers can likely get this accuracy into the 98-99% range. 
 
-So what does this mean? Well, perhaps there is an additional step to predicting sport games. Prior to predicting the results for each game, it may be helpful to first predict certain variable values for each game. While this is no easy task, I've proven that predicting the correct variable values for each game can, in fact, predict the outcome of the game at a reasonable accuracy.
+So what does this mean? Well, perhaps there is an additional step to predicting NHL games. Prior to predicting the results for each game, it may be helpful to first predict certain variable values for each game. While this is no easy task, I've proven that predicting the correct variable values for each game can, in fact, predict the outcome of the game at a reasonable accuracy. 
 
+# Conclusion
+
+There can be many approaches to predicting NHL games. With my method, I used team’s cumulative averaged stats to try to predict the outcome of the games. The overall results were not promising, as most hockey fanatics can pick game winners better than a 60% rate. However, when using the right variable values per game, game outcomes have been proven to be predicted at a more than reasonable accuracy. The question then remains how we get to the point where we can predict game stats accurately to hit that 90% accuracy threshold. 
+
+1) Will results improve with more training data? 
+	- Normally, the answer would be yes. But when it comes ot hockey, I'm not so sure. The NHL is in a constant change of flux -= the game is always evolving. NHL players do not play the same style that was palyed back in the 90s. More training data means reaching back further into NHL history, and using those game stats could cause even more confusion to the model.
+
+2) Next
