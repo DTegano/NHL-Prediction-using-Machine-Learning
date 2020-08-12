@@ -1853,6 +1853,109 @@ Prediction   L   W
 ```
 Obviously, this is much better than the first nueural network model, but still room for plenty of improvement.
 
+<b> Optimizing the model </b>
+
+There are many techniques to optimize a neural network. To start, it's not a bad idea to add/remove neurons, as well as experimenting with a different number of hidden layers. From there, try out different optimizers and learning rates if you're not sure what will work best for your model. While optimziing my model, I found that it was best to also train the model using the SGD optimizer (stochastic gradient descent) - to help push the accuracy as much as possible. 
+
+K-Fold Cross validation is another technique that was used to push the accuracy to its' peak. I'll note that at this point in my project, I added two additional seasons of training data - bringing my training data total up to 4 seasons. Using a 4-Fold cross validation, I manually partitioned my data so that each season is used as a validation set:
+
+```
+train_2015 = train[1:1211,]
+train_2016 = train[1212:2423,]
+train_2017 = train[2424:3746,]
+train_2018 = train[3747:5017,]
+
+label_2015 = trainLabels[1:1211,]
+label_2016 = trainLabels[1212:2423,]
+label_2017 = trainLabels[2424:3746,]
+label_2018 = trainLabels[3747:5017,]
+
+
+#1st fold
+train_1 = rbind(train_2018,train_2017,train_2016,train_2015)
+label_1 = rbind(label_2018,label_2017,label_2016,label_2015)
+
+history = model %>%
+  fit(train_1,
+      label_1,
+      epoch = 50,
+      batch_size = 100,
+      validation_split = 0.24)
+
+#2nd fold
+train_2 = rbind(train_2015,train_2017,train_2016,train_2018)
+label_2 = rbind(label_2015,label_2017,label_2016,label_2018)
+
+history = model %>%
+  fit(train_2,
+      label_2,
+      epoch = 50,
+      batch_size = 100,
+      validation_split = 0.25)
+
+#3rd fold
+train_3 = rbind(train_2016,train_2018,train_2015,train_2017)
+label_3 = rbind(label_2016,label_2018,label_2015,label_2017)
+
+history = model %>%
+  fit(train_3,
+      label_3,
+      epoch = 50,
+      batch_size = 100,
+      validation_split = 0.26)
+
+#4th fold
+train_4 = rbind(train_2017,train_2015,train_2018,train_2016)
+label_4 = rbind(label_2017,label_2015,label_2018,label_2016)
+
+history = model %>%
+  fit(train_4,
+      label_4,
+      epoch = 50,
+      batch_size = 100,
+      validation_split = 0.24)
+```
+
+Some of the training sets are different lengths, which explains the different validation splits. If you can recall how my data is formatted, I needed to manually enter stats for the 1st games of season so that I have data to predict game 2+. Since this was a time-consuming approach, I didn't complete this every season - especially not my new training data.
+
+Combining the cross validation with the other optimizing methods allowed me to get the best accuracy possible for my neural network:
+
+```
+model = NULL
+
+model <- local({
+    input = layer_input(shape = c(44), name = 'main_input')
+    
+    layer1 = input %>%
+        layer_dense(units = 30, activation = "relu")
+    
+    layer2 = input %>%
+        layer_dense(units = 30, activation = "relu")
+    
+    output = layer_concatenate(c(layer1, layer2)) %>%
+        layer_dropout(0.5) %>%
+        layer_dense(units = 10, activation = "relu", kernel_regularizer = regularizer_l1(0.001)) %>%
+        layer_dense(units = 2, activation = "sigmoid", name = 'main_outout')
+    
+    keras_model(inputs = input, outputs = output)
+})
+
+model %>%
+  compile(loss = "binary_crossentropy",
+          optimizer = optimizer_adam(lr=.0001),
+          metrics = "accuracy")
+
+history = model %>%
+  fit(train,
+      trainLabels,
+      epoch = 300,
+      batch_size = 120,
+      validation_split = 0.2)
+```
+<img src = "https://user-images.githubusercontent.com/39016197/90069153-1ea8fc00-dcaf-11ea-90d8-c991b1177b00.png" width = 600 height = 500>
+<img src = "https://user-images.githubusercontent.com/39016197/90069193-31bbcc00-dcaf-11ea-9163-6468000f78b1.png" width = 600 height = 500>
+
+
 # Troubleshoot
 
 With the above results, what exactly went wrong here? Did I not have the correct variables? Did I not have enough data? Or is predicting using a cumulative mean a poor way to approach these predictions? Well, there's one way I can at least narrow down my options - and that's running the predictions with my raw data.
