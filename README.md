@@ -1843,13 +1843,14 @@ Obviously, this is much better than the first nueural network model, but still r
 
 # Troubleshoot
 
-With the above results, what exactly went wrong here? Did I not have the correct variables? Did I not have enough data? Or is predicting using a cumulative mean a poor way to approach these preditions? Well, there's one way I can at least narrow down my options - and that's running the predictions with my raw data.
+With the above results, what exactly went wrong here? Did I not have the correct variables? Did I not have enough data? Or is predicting using a cumulative mean a poor way to approach these predictions? Well, there's one way I can at least narrow down my options - and that's running the predictions with my raw data.
 
-I know what you're thinking, and believe me, I share your concern. Using my raw data means that I'm using real stats from each game - including goals scored! It would be a no-brainer for my model to get 100% accuracy. But what if I removed the obvious stats that would give away the outcome of the game, such as: Goals, Empty Netters, Goals Against, Differential, Points, Wins, etc. In fact, I'll only keep 20 variables that can be unrelated, more or less, to the result:
+I know what you're thinking, and believe me, I share your concern. Using my raw data means that I'm using real stats from each game - including goals scored! It would be a no-brainer for my model to get 100% accuracy. But what if I removed the obvious stats that would give away the outcome of the game, such as: Goals, Empty Netters, Goals Against, Differential, Points, Wins, etc. In fact, I'll only keep 14 variables that can be unrelated, more or less, to the result:
+
 
 <img src = "https://user-images.githubusercontent.com/39016197/90059220-0b426480-dca0-11ea-8609-9eedcfceaa9d.png" width = 1600 height = 350>
 
-Using the same API neural network as my optimized model above, but with less neurons, I'm finally able to achieve significant results:
+I'll follow the same process as before - scaling and hot-coding my data for my neural network. Using the same API neural network as my optimized model above, but with less neurons, I'm finally able to achieve some significant results:
 
 ```
 model = NULL
@@ -1952,4 +1953,7 @@ Prediction   L   W
        'Positive' Class : W   
 ```
 
-As we can see, knowing only 20 of the variables for each yields a very high accuracy. In fact, as we see from the validation loss, running additional epochs can easily get this accuracy into the 98-99% range. 
+As we can see, knowing only 14 of the variables for each yields a very high accuracy - and this is without even optimizing my model. Based on the validation loss, running additional epochs with more/less neurons and hidden layers can likely get this accuracy into the 98-99% range. 
+
+So what does this mean? Well, perhaps there is an additional step to predicting sport games. Prior to predicting the results for each game, it may be helpful to first predict certain variable values for each game. While this is no easy task, I've proven that predicting the correct variable values for each game can, in fact, predict the outcome of the game at a reasonable accuracy.
+
