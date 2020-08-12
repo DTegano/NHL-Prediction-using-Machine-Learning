@@ -613,7 +613,7 @@ Based on the p-value of the T-test, we can reject the null hypothesis that there
 
 <b> Corsi </b>
 
-Next, I'll do the same commands as I did with the goal variables but with Corsi now. Looking ahead at correlations for the Result variable, you'll understand why this variable was chosen to be looked at.
+Next, I'll do the same commands as I did with the goal variables but with Corsi now. Looking ahead at correlations for the Result variable, you'll understand later on why this variable was chosen to be looked at.
 
 ```
 hist(Home_Corsi)
