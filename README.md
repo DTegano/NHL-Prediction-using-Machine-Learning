@@ -1337,7 +1337,7 @@ Number of Fisher Scoring iterations: 4
 [1] 0.5730129
 ```
 
-The best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. Below is one graph that can be completed with the logistic regression. 
+The best accuracy I could muster was a 57.3% - only roughly 1% higher than if I simply kept all of my variables into the model. While this is slightly disappointing, I still have hope that the more complex models can perform better. I'm also sharing below one of many graphs that can be completed with the logistic regression. As we can see, the predictions were all over the place - the model could have done almost just as well by flipping a coin for every game. On to the next model.
 
 ```
 pred = predict(logistic, newdata = test, type = "response") # removed the rounding to see real value
@@ -1348,8 +1348,6 @@ pred.data$rank = 1:nrow(pred.data)
 ggplot(data = pred.data, aes(x = rank, y = winning.chances)) + geom_point(aes (color = dtest$Result), alpha=1, shape = 2, stroke=2) + labs(x = "Game Number", y = "Predicted Wins/Losses", title = "Logistic Regression Results")
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/88246870-16821180-cc59-11ea-919a-487553c351da.png" width = 510 height = 350>
-
-As we can see, the predictions were all over the place - the model could have done just as well by flipping a coin for every game.
 
 <b> Best Logistic Model </b>
 
