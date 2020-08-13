@@ -6,9 +6,9 @@ This is part 2 of my main overall project. In order to predict games, I believe 
 
 <b> * Editor's Note: </b> Towards the end of my project when optimizing my model, I'll note that I added the 2015-2016 and 2016-2017 seasons as additional training data.
 
-# Libraries 
+# Library Packages 
 
-Here are my libraries used for this project:
+Here are the different library packages used for this project:
 
 ```
 library(readxl) # importing xls & xlsx files
