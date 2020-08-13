@@ -66,7 +66,7 @@ A correlation value of 0.064 makes much more sense than the 0.959 value between 
 
 # Importing the Data
 
-As we can see from the above, my machine learning data set will be imported into R as "Dtrain" and "Dtest". However, I think there is a lot of value of also looking at the raw data - which is the data that shows each game's stats and results before they were manipulated into an aggregated data set. For this raw data, I'll import both my training and test set and combine both sets into one data frame called "dt"  (I've always gotten into the habit of using dt for 'data table' and because my initials happen to be dt):
+As we can see from the above, my machine learning data set will be imported into R as "dtrain" and "dtest". However, I think there is a lot of value to first look at the raw data - which is the data that shows each game's stats and results before they were manipulated into an aggregated data set. For this raw data, I'll import both my training and test set and combine both sets into one data frame called "dt"  (I've always gotten into the habit of using dt for 'data table' and because my initials happen to be dt):
 
 ```
 dtrain = read_excel("Training Final CM.xlsx", col_names = TRUE)
