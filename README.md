@@ -1997,13 +1997,13 @@ Prediction   L   W
        'Positive' Class : W
 ```
 
-Based on the accuracy, this is my best model yet with this data. Despite exhaustive efforts to push past the 60% threshold, it seems I'm either stuck at a local or global minimum - meaning any changes to my weights results in a lesser accuracy.
+Once the model was initially run, I ran the model again with the different folds and modified the learning rate and batch sizes. Based on the final accuracy, this is my best model yet with this data. Despite exhaustive efforts to push past the 60% threshold, it seems I'm either stuck at a local or global minimum - meaning any changes to my weights results in a lesser accuracy. If it was truly a local minimum, I may be able to increase my accuracy with a higher learning rate but several attempts with different learning rates, this seems to be the best I can do with my data.
 
 # Troubleshoot
 
 With the above results, what exactly went wrong here? Did I not have the correct variables? Did I not have enough data? Is predicting using a cumulative mean a poor way to approach these predictions? Well, there's one way I can at least narrow down my options - and that's running the predictions with my raw data.
 
-I know what you're thinking, and believe me, I share your concern. Using my raw data means that I'm using real stats from each game - including goals scored! It would be a no-brainer for my model to get 100% accuracy. But what if I removed the obvious stats that would give away the outcome of the game, such as: Goals, Empty Netters, Goals Against, Differential, Points, Wins, etc. In fact, I'll only keep 14 variables that can be unrelated, more or less, to the result:
+I know what you're thinking, and believe me, I share your concern. Using my raw data means that I'm using real stats from each game - including goals scored! It would be a no-brainer for my model to get 100% accuracy. But what if I removed the obvious stats that would give away the outcome of the game, such as: Goals, Empty Netters, Goals Against, Differential, Points, Wins, etc. In fact, I'll only keep 14 variables that are unrelated, more or less, to the result:
 
 
 <img src = "https://user-images.githubusercontent.com/39016197/90059220-0b426480-dca0-11ea-8609-9eedcfceaa9d.png" width = 1600 height = 350>
@@ -2111,9 +2111,9 @@ Prediction   L   W
        'Positive' Class : W   
 ```
 
-As we can see, knowing only 14 of the variables for each yields a very high accuracy - and this is without even optimizing my model. Based on the validation loss, running additional epochs with more/less neurons and hidden layers can likely get this accuracy into the 98-99% range. 
+As we can see, knowing only 14 of the variable's true values yields a very high accuracy - and this is without even optimizing my model. Based on the validation loss, running additional epochs with more/less neurons and expiermenting with hidden layers can likely get this accuracy into the 98-99% range. 
 
-So what does this mean? Well, perhaps there is an additional step to predicting NHL games. Prior to predicting the results for each game, it may be helpful to first predict certain variable values for each game. While this is no easy task, I've proven that predicting the correct variable values for each game can, in fact, predict the outcome of the game at a reasonable accuracy. 
+So what does this mean? My takeaway is that using a cumulative mean to predict each game will only yield roughly a 60% accuracy. When predicting with my method, there needs to be more research involved to accurately predict each variable's values before predicting the outcome of each game. What this means is that, perhaps, there is an additional step to predicting NHL games. While it will be no easy task predicting accurate variable values, such as shots and hits, I've proven that predicting the correct variable values for each game can, in fact, predict the outcome of the game at a reasonable accuracy. 
 
 # Conclusion
 
