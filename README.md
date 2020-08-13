@@ -79,7 +79,7 @@ raw_2020 = read_excel("2019-2020 Test Base.xlsx", col_names = TRUE)
 dt = rbind(raw_2018, raw_2019, raw_2020)
 ```
 
-Once I have created my combined data set for analysis purposes, I'll create a new data set and remove the Results column from my test set - as this will be the variable we will be predicting. This will be necessary since I want to keep my Results variable in my original test set so that I can compare my machine learning results later on while still being able to test my model without the answer sheet. I will also remove the date and team names from my training and test set - as I will not need these variables when I make my predictions. Finally, I need to make sure that my prediction variable is set as a factor, as well as the result, team names, and game length for the raw data analysis:
+Once I have created my combined data set for analysis purposes, I'll create a new data set and remove the Results column from my test set - as this will be the variable we will be predicting. This will be necessary since I want to keep my Results variable in my original test set so that I can compare my machine learning results later on while still being able to test my model without the answer sheet. I will also remove the date and team names from my training and test set - as I will not need these variables when I make my predictions. I will, however, keep these variables in my combined data set for the analysis. Since characters won't help me in this kind of analysis, I'll change my non-numeric variables (result, team names, and game length) to a factor:
 
 ```
 test = dtest[,-4]
@@ -100,7 +100,7 @@ dt$Game_Length = as.factor(dt$Game_Length)
 
 # Analysis - Raw Data 
 
-Before conducting analysis, it's always a good idea to view the data and get familiar with its' contents. Since I'm using R, it's also a good idea to attach your data set so that variables are much easier to call. Once this has been completed, one of the first commands you should run with a new data frame is the structure and summary functions. Since my teams and results variables loaded in as characters, I'll first change these variables to factors. It's also very important to deal with any missing values. I did already fix all of my missing values in Part 1, but it still can't hurt to check just in case:
+Before conducting analysis, it's always a good idea to view the data and get familiar with its' contents. Since I'm using R, it's also a good idea to attach your data set so that variables are much easier to call. Once this has been completed, one of the first commands you should run with a new data frame is the structure and summary functions. It's also very important to deal with any missing values. I did already fix all of my missing values in Part 1, but it still can't hurt to check just in case:
 
 ```
  table(is.na(dt))
