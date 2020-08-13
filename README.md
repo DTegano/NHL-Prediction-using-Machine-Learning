@@ -33,7 +33,7 @@ library(deepviz)
 library(magrittr)
 ```
 
-The main packages used for the analysis portion was the caret, stats, kernlab, keras, and tensorflow packages. The confusion matrix within the caret package is extremely handy for when you're comparing a model's prediction results. Kernlab was used for the Support Vector Machine and the Keras/Tensorflow packages were used to build a more complex neural network than the models offered in the neuralnet package. I highly recommend the switch for anyone with an interest in build neural networks using R.
+The main packages used for the analysis portion was the caret, stats, kernlab, keras, and tensorflow packages. The confusion matrix within the caret package is extremely handy for when you're comparing a model's prediction results. Kernlab was used for the Support Vector Machine and the Keras/Tensorflow packages were used to build a more complex neural network than the models offered in the neuralnet package. I highly recommend the switch for anyone with an interest in building neural networks using R.
 
 # Re-Structuring the Data
 
