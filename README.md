@@ -79,7 +79,7 @@ raw_2020 = read_excel("2019-2020 Test Base.xlsx", col_names = TRUE)
 dt = rbind(raw_2018, raw_2019, raw_2020)
 ```
 
-Once I have combined my training set with my entire test set, I'll create a new set and remove the Results column from my test set - as this will be the variable we will be predicting. Since I want to keep my Results variable in my original test set so that I can compare my machine learning results later on, I’ll create a new variable without the Results to ‘test’ my prediction mode while preserving my original test data. I will also remove the date and team names from my training and test set - as I will not need these variables when I make my predictions. Finally, I need to make sure that my prediction variable is set as a factor, as well as the result, team names, and game length for the raw data analysis:
+Once I have created my combined data set for analysis purposes, I'll create a new data set and remove the Results column from my test set - as this will be the variable we will be predicting. This will be necessary since I want to keep my Results variable in my original test set so that I can compare my machine learning results later on while still being able to test my model without the answer sheet. I will also remove the date and team names from my training and test set - as I will not need these variables when I make my predictions. Finally, I need to make sure that my prediction variable is set as a factor, as well as the result, team names, and game length for the raw data analysis:
 
 ```
 test = dtest[,-4]
