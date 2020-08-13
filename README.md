@@ -110,7 +110,7 @@ Before conducting analysis, it's always a good idea to view the data and get fam
 ```
 
 
-Once the change has been made, here are the corresponding structure and summary commands:
+Once your data is clear of any missing values, here are the corresponding structure and summary commands:
 
 ``` 
 > str(dt)
@@ -240,12 +240,13 @@ Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	3624 obs. of  36 variables:
 
 Some interesting observations/notes from the 3 seasons worth of data: <p><p/>
 1. Not all of the teams played the same amount of home and away games due to the quarantine stoppage.
-2. The highest amount of goals scored in a NHL game are 10 (home team) and 9 (away team)
+2. The highest amount of goals scored in a NHL game over the last three seasons are 10 (home team) and 9 (away team)
 3. The highest corsi % we have seen in any game is 74.8%, while the highest amount of shooting % in any game is a whopping 41%.
 4. 87 Penalty minutes and 67 hits is the most we've seen in any game over the last 3 years.
-5. Neither the home or away team has recorded more than 33 blocked shots in a single game.
+5. 15% of NHL games end in Overtime and almost 8% of games go to a Shootout.
+6. Home team advantage? Not in the NHL - only 54.5% of wins belong to a home team.
 
-Now, I'll look at a few different variables to see how much of an impact they on the outcome when the variable is maximized and minimized. The trend that I'm expecting here (assuming a positive relationship) is that when the variable is maximized, we'd expect to see wins and when the variable is minimized, we'd expect losses. Take goals for example - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals lost <u> almost </u> every game (I believe there were 1 or 2 shootout victories at 0-0).
+Now, I'll look at a few different variables to see how much of an impact they have on the outcome when the variable is maximized and minimized. The trend that I'm expecting here (assuming a positive relationship) is that when the variable is maximized, we'd expect to see wins and when the variable is minimized, we'd expect losses. Take goals for example - the teams that scored 10 and 9 goals won their games, and the teams that scored 0 goals lost <u> almost </u> every game (I believe there were 1 or 2 shootout victories at 0-0, but I think you get the point I'm trying to make).
 
 For the following commands, I set up a quick function to return the name of the team, date, and result of the max-min value:
 
