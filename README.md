@@ -2013,7 +2013,7 @@ Prediction   L   W
        'Positive' Class : W
 ```
 
-Once the model was initially run, I ran the model again with the different folds and modified the learning rate and batch sizes. Based on the final accuracy, this is my best model yet with this data. Despite exhaustive efforts to push past the 60% threshold, it seems I'm either stuck at a local or global minimum - meaning any changes to my weights results in a lesser accuracy. If it was truly a local minimum, I may be able to increase my accuracy with a higher learning rate but several attempts with different learning rates, this seems to be the best I can do with my data.
+Once the model was initially run, I ran the model again with the different folds and modified the learning rate and batch sizes. Based on the final accuracy, this is my best model yet with this data. Despite exhaustive efforts to push past the 60% threshold, it seems I'm either stuck at a local or global minimum - meaning any changes to my weights results in a lesser accuracy. If it was truly a local minimum, I may be able to increase my accuracy with a higher learning rate but after several attempts with different learning rates, this seems to be the best I can do with my data.
 
 # Troubleshoot
 
