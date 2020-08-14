@@ -1695,7 +1695,7 @@ Model architecture:
 ```
 model %>% plot_model()
 ```
-<img src = "https://user-images.githubusercontent.com/39016197/89111757-d704b380-d416-11ea-82c7-c83908d6c0ea.png" width = 450 height = 400>
+<img src = "https://user-images.githubusercontent.com/39016197/89111757-d704b380-d416-11ea-82c7-c83908d6c0ea.png" width = 380 height = 420>
 
 Notice that the architecture is quite different than what the first model looked like (excluding node count). I'll also get to choose my loss, optimizer (both available in the first model, but not as effective) and metrics. I'll run 40 epochs with batch sample sizes of 32, and a validation set at 20% of my training data (which does reduce the overall size of my training data).
 
