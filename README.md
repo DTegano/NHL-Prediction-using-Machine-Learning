@@ -1438,7 +1438,7 @@ plot(dtrain$Home_Goals, dtrain$Away_Goals, col = dtrain$Result)
 ```
 #SVM with only goal variables
 
-> svm_model = ksvm(Result ~ Home_Goals + Away_Goals, data = dtrain, cost = 0.5)
+> svm_model = ksvm(Result ~ Home_Goals + Away_Goals, data = dtrain, C = 0.5)
 
 > pred = predict(svm_model, test)
 
@@ -1472,7 +1472,22 @@ Overall, the results were not kind to me with the SVM. Even after trying differe
 ```
 # Best model
 
-> svm_model = ksvm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_Corsi + Away_Corsi + Home_Corsi_A + Away_Corsi_A + Home_SA + Away_SA + Home_PIM_A + Away_PIM_A, data = dtrain, cost = 0.1, kpar=list(sigma=0.1))
+> svm_model = ksvm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_Corsi + Away_Corsi + Home_Corsi_A + Away_Corsi_A + Home_SA + Away_SA + Home_PIM_A + Away_PIM_A, data = dtrain, C = 0.1, kpar=list(sigma=0.1))
+
+
+> svm_model
+Support Vector Machine object of class "ksvm" 
+
+SV type: C-svc  (classification) 
+ parameter : cost C = 0.1 
+
+Gaussian Radial Basis kernel function. 
+ Hyperparameter : sigma =  0.1 
+
+Number of Support Vectors : 2370 
+
+Objective Function Value : -229.3267 
+Training error : 0.427525 
 
 > pred = predict(svm_model, test)
 
