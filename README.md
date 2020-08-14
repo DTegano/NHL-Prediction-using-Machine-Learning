@@ -1526,7 +1526,7 @@ You may notice that the variables are a little different than the logistic regre
 
 # Neural Network
 
-To start, I'll run a basic neural network model, with all of the variables, using the neural net package. I don't expect good results for this model for several reasons: 1) I prefer running neural networks using the keras/tensorflow packages, 2) many of the activation & optimizer functions, as well as the input/output layers, can't be modified here and 3) The only real reason to run this model is to show a plot example, since this is not currently an option for the keras/tf packages. Unlike the SVM, I definitely want to normalize my data before running a neural network model:
+To start, I'll run a basic neural network model, with all of the variables, using the neural net package. I don't expect good results for this model since I prefer running neural networks using the keras/tensorflow packages -  many of the activation & optimizer functions, as well as the input/output layers, are easily modified with keras compared to the neuralnet package model. The only real reason to run this model is to show a plot example of the network neurons and layers, since this is not currently an option for the keras/tf packages. Unlike the SVM, I definitely want to normalize my data before running a neural network model:
 ```
 dtrain_norm = as.data.frame(lapply(dtrain[,2:45], normalize))
 
