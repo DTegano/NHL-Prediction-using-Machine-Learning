@@ -2129,7 +2129,7 @@ Prediction   L   W
 
 As we can see, knowing only 14 of the variable's true values yields a very high accuracy - and this is without even optimizing my model. Based on the validation loss, running additional epochs with more/less neurons and expiermenting with hidden layers can likely get this accuracy into the 98-99% range. 
 
-So what does this mean? My takeaway is that using a cumulative mean to predict each game will only yield roughly a 60% accuracy. When predicting with my method, there needs to be more research involved to accurately predict each variable's values before predicting the outcome of each game. What this means is that, perhaps, there is an additional step to predicting NHL games. While it will be no easy task predicting accurate variable values, such as shots and hits, I've proven that predicting the correct variable values for each game can, in fact, predict the outcome of the game at a reasonable accuracy. 
+So what does this mean? My takeaway is that using a cumulative mean to predict each game will only yield roughly a 60% accuracy. When predicting using my method, there needs to be more research involved to accurately predict each variable's values before predicting the outcome of each game. What this means is that, perhaps, there is a prior step required (such as first predicting variable values) when predicting NHL games. While it will be no easy task predicting accurate variable values, such as shots and hits, I've proven that predicting the correct variable values for each game can, in fact, predict the outcome of the game at a reasonable accuracy.
 
 # Conclusion
 
