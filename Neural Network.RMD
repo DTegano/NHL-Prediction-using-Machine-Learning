@@ -1,0 +1,106 @@
+### Neural Network ### 
+library(readxl) # importing xls & xlsx files
+library(dplyr) # used for nesting/chaining
+library(tidyr) # data cleaning
+library(stringr) # Used to detect OT and Shootouts
+library(writexl) # exporting to xlsx file
+library(chron) # Date conversion to Time
+library(stats) # Group Functional
+library(plyr) # ddpylr for aggregation
+library(caret) # Confusion Matrix
+library(gmodels) #cross table
+library(ggplot2)
+library(cowplot)
+library(tidyverse)
+library(broom)
+library(kernlab) #used for SVM
+library(neuralnet) #used for ANN
+library(keras)
+library(tensorflow)
+
+
+# Set up Directories
+
+getwd()
+
+setwd("C:/Users/David/Documents/MSDS 696/data")
+
+# Import Data
+dtrain = read_excel("Training Final CM.xlsx", col_names = TRUE)
+dtest = read_excel("Test Final CM.xlsx", col_names = TRUE)
+
+ttrain = read_excel("Training Final.xlsx", col_names = TRUE)
+ttest = read_excel("Test Final.xlsx", col_names = TRUE)
+
+# Remove results from test set
+test = dtest[,-4]
+atest = ttest[,-4]
+
+# Remove Team Names and Data from training and test sets
+dtrain = dtrain[, -c(1:3, 37,38)] #dont need games played with cm
+ttrain = ttrain[, -c(1:3, 37,38)]
+dtest = dtest[, -c(1:3, 37,38)]
+ttest = ttest[, -c(1:3, 37,38)]
+
+# Convert data to factors
+dtrain$Result = as.factor(dtrain$Result)
+
+dtest$Result = as.factor(dtest$Result)
+
+dt = rbind(dtrain, dtest)
+
+attach(dtrain)
+
+# Normalize Function
+normaliz = function(x) {
+    (x-min(x))/(max(x) - min(x))
+}
+
+# Scale Function
+scal = function(x) {
+    scale(x, center = TRUE, scale = TRUE)
+}
+
+# Scale/Normalize the data. Better than the norm formula.
+dtrain_norm = as.data.frame(lapply(dtrain[,2:45], scal))
+
+dtrain_norm = cbind(dtrain$Result, dtrain_norm)
+names(dtrain_norm)[1] = "Result"
+
+dtest_norm = as.data.frame(lapply(dtest[,2:45], scal))
+
+#ann model
+attach(dtrain_norm)
+
+set.seed(18)
+
+ann_model = neuralnet(Result ~ Home_Goals + Away_Goals, data = dtrain_norm, hidden = c(50,10), threshold = 0.1, stepmax = 1e5, err.fct = "ce", act.fct = "logistic", linear.output = FALSE, lifesign = 'full', rep = 1)
+
+net.predict = compute(ann_model, dtest_norm)$net.result
+
+net.prediction = c("W", "L")[apply(net.predict, 1, which.max)]
+
+predict.table = table(dtest$Result, net.prediction)
+
+predict.table
+
+# or 
+
+net.prediction = as.factor(net.prediction)
+
+confusionMatrix(net.prediction, dtest$Result, positive = "W")
+
+# plot
+plot(ann_model)
+
+
+plot(ann_model, col.hidden = 'darkgreen', col.hidden.synapse = 'darkgreen', col.intercept = "red", col.out = "blue", show.weights = F, information = F, fill = 'lightblue')
+ 
+# mid model
+ann_model = neuralnet(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_Corsi + Away_Corsi + Home_BS + Away_BS, data = dtrain_norm, hidden = c(6,4), threshold = 1.0, stepmax = 1e5, err.fct = "ce", act.fct = "logistic", linear.output = FALSE, lifesign = 'full', learningrate = NULL, rep = 1)
+
+# all
+ann_model = neuralnet(Result ~ ., data = dtrain_norm, hidden = c(150,50,25), threshold = 7.0, stepmax = 1e5, err.fct = "ce", act.fct = "logistic", linear.output = FALSE, lifesign = 'full', learningrate = NULL, rep = 1)
+
+# scale - getting much more even results
+

@@ -1,0 +1,267 @@
+### Regression Script ### 
+library(readxl) # importing xls & xlsx files
+library(dplyr) # used for nesting/chaining
+library(tidyr) # data cleaning
+library(stringr) # Used to detect OT and Shootouts
+library(writexl) # exporting to xlsx file
+library(chron) # Date conversion to Time
+library(stats) # Group Functional
+library(plyr) # ddpylr for aggregation
+library(caret) # Confusion Matrix
+library(gmodels) #cross table
+library(ggplot2)
+library(cowplot)
+library(tidyverse)
+library(broom)
+
+# Set up Directories
+
+getwd()
+
+setwd("C:/Users/David/Documents/MSDS 696/data")
+
+# Import Data
+dtrain = read_excel("Training Final CM.xlsx", col_names = TRUE)
+dtest = read_excel("Test Final CM.xlsx", col_names = TRUE)
+
+ttrain = read_excel("Training Final.xlsx", col_names = TRUE)
+ttest = read_excel("Test Final.xlsx", col_names = TRUE)
+
+# Remove results from test set
+test = dtest[,-4]
+atest = ttest[,-4]
+
+# Remove Team Names and Data from training and test sets
+dtrain = dtrain[, -c(1:3, 37,38)] #dont need games played with cm
+ttrain = ttrain[, -c(1:3, 37,38)]
+dtest = dtest[, -c(1:3, 37,38)]
+ttest = ttest[, -c(1:3, 37,38)]
+
+# Convert data to factors
+dtrain$Result = as.factor(dtrain$Result)
+
+dtest$Result = as.factor(dtest$Result)
+
+dt = rbind(dtrain, dtest)
+
+attach(dtrain)
+
+# Normalize Function
+normalize = function(x) {
+    (x-min(x))/(max(x) - min(x))
+}
+
+# Scale Function
+scal = function(x) {
+    scale(x, center = TRUE, scale = TRUE)
+}
+
+# Scale Data/normalize
+dt = dtrain[,-1]
+
+dt = data.frame(sapply(dt, scale))
+dt = cbind(dtrain$Result, dt)
+names(dt)[names(dt)=="dtrain$Result"] = "Result"
+
+dt = data.frame(sapply(dt, normalize))
+dt = cbind(dtrain$Result, dt)
+names(dt)[names(dt)=="dtrain$Result"] = "Result"
+
+# Basic Linear Regression Analysis - shots and goals
+#averaged coeff is 0.03
+model = lm(dtrain$Home_Goals ~ dtrain$Home_Shots )
+summary(model)
+#aggregated is .09. makes more sense
+model = lm(ttrain$Home_Goals ~ ttrain$Home_Shots)
+summary(model)
+
+attach(ttrain)
+model = lm(Home_Goals ~ Home_Shots + Away_PIM + Home_Corsi + Home_OFS + Home_HT + Home_BS)
+
+summary(model)
+
+# since corsi is not signficant
+model = lm(Home_Goals ~ Home_Shots + Away_PIM  + Home_OFS + Home_HT + Home_BS)
+
+summary(model)
+model$fitted.values
+
+results = predict(model, test)
+
+testgoals = round(test$Home_Goals)
+results = round(results)
+
+table(results, testgoals)
+
+#or
+CrossTable(x = results, y = testgoals, prop.chisq = FALSE)
+#predicted 72% correctly, but almost all were 3 goals.
+
+# away points regression
+dt_away = dt[, -1]
+dt_away= dt_away[, rep(c(FALSE, TRUE), 22)]
+
+model = lm(Away_P ~ Away_W + Away_DIF + Away_PDO + Away_SH)
+summary(model)
+
+#since PDO and SH is not significant
+model = lm(Away_P ~ Away_W + Away_DIF)
+summary(model)
+
+plot(Away_P ~ Away_W + Away_DIF)
+abline(model, col = "red")
+abline(model, col = "red")
+
+dt_away %>%
+    mutate(High_Points = ifelse(Away_P > mean(Away_P), "Yes", "No")) %>%
+    ggplot(aes(x = Away_W, y = Away_DIF, color = High_Points)) + geom_point() + labs(x = "Average Win Rate", y = "Average Differential", title = "Above Average Points")
+
+# Away_SV
+model = lm(Away_SV ~ Away_PDO + Away_P + Away_W + Away_SA + Away_GA + Away_BS)
+summary(model)
+
+model = lm(Away_SV ~ Away_PDO + Away_P + Away_W + Away_SA + Away_GA)
+summary(model)
+
+
+dt_away %>%
+    mutate(High_Save = ifelse(Away_SV > mean(Away_SV), "Yes", "No")) %>%
+    ggplot(aes(x = Away_W, y = Away_P, color = High_Save)) + geom_point() + labs(x = "Average Win Rate", y = "Average Points per Game", title = "Above Average Saves") + geom_smooth(method = "lm")
+    
+
+# Logistic Regression Analysis - results 
+attach(dtrain) #asmp - linear relationship between the logit of the outcome and each predictor variables. no influential values (extreme values or outliers) in the continuous predictors. no high intercorrelations (i.e. multicollinearity) among the predictors.
+
+logistic = glm(Result ~ ., data = dtrain, family = "binomial")
+summary(logistic) #in log reg, you are looking at odds. so 1 unit increase in home goals increases the logodds by 1.86.
+
+pred = predict(logistic, newdata = test, type = "response")
+
+results = round(pred)
+
+table(dtest$Result)
+table(results, dtest$Result)
+
+
+
+# Basic log reg with goals only
+logistic = glm(Result ~ Home_Goals + Away_Goals, data = dtrain, family = "binomial")
+
+summary(logistic)
+
+pred = predict(logistic, newdata = test, type = "response")
+
+pred = round(pred)
+
+results = table(dtest$Result, pred)
+
+results
+
+recal = results[4]/(results[4] + results[2])
+prec = results[4]/(results[4] + results[3])
+
+acc = (results[1] + results[4])/nrow(dtest) #53.42 acc
+
+recal
+prec
+acc
+
+# best model? #57.3 - removed PDO
+
+logistic = glm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_PIM + Away_PIM + Home_Corsi + Away_Corsi + Home_HT + Away_HT + Home_EN + Away_EN + Home_BS + Away_BS + Home_SH + Away_SH + Home_DIF + Away_DIF + Home_W + Away_W + Home_P + Away_P + Home_SV + Away_SV, dtrain, family = "binomial")
+
+summary(logistic)
+
+pred = predict(logistic, newdata = test, type = "response")
+
+pred = round(pred)
+
+results = table(dtest$Result, pred)
+
+results
+
+recal = results[4]/(results[4] + results[2])
+prec = results[4]/(results[4] + results[3])
+
+acc = (results[1] + results[4])/nrow(dtest)
+
+recal
+prec
+acc
+
+#R2 for regression
+log_likelihood_null = logistic$null.deviance/-2
+
+log_likelihood_proposed = logistic$deviance/-2
+
+(log_likelihood_null - log_likelihood_proposed)/log_likelihood_null
+
+# good model is 0.0226. full model is 0.0298.
+
+#convert to use confusion matrix
+dtest$Result = ifelse(dtest$Result=="W", 1, 0)
+dtest$Result = as.factor(dtest$Result)
+
+
+table(pred)
+pred = as.factor(pred)
+
+
+confusionMatrix(pred, dtest$Result) 
+
+library("vcd")
+
+Kappa(table(pred, dtest$Result)) #kappa coefficient adjusts accuracy by accounting for this chance of guessing correctly. 0-20 is a poor range.
+
+
+#Plot
+
+plot(dt$Result ~ dt$Home_Goals, type = "p")
+
+plot(dt$Home_Goals, dt$Result)
+
+plot(dtest$Home_Goals, dtest$Result)
+
+
+# Do not round
+pred
+
+pred.data = data.frame(winning.chances = pred, results=dtest$Result)
+pred.data = pred.data[order(pred.data$winning.chances, decreasing = FALSE),]
+pred.data$rank = 1:nrow(pred.data)
+
+
+ggplot(data = pred.data, aes(x = rank, y = winning.chances)) + geom_point(aes (color = dtest$Result), alpha=1, shape = 2, stroke=2) + labs(x = "Game Number", y = "Predicted Wins/Losses", title = "Logistic Regression Results")
+
+#weights?
+wt = rep(c(1,2), 1297) #weight has to be equal to number of rows not columns?
+
+logistic = glm(Result ~ Home_Goals + Away_Goals + Home_Shots + Away_Shots + Home_PIM + Away_PIM + Home_Corsi + Away_Corsi + Home_HT + Away_HT + Home_EN + Away_EN + Home_BS + Away_BS + Home_SH + Away_SH + Home_DIF + Away_DIF + Home_W + Away_W + Home_P + Away_P + Home_SV + Away_SV, family = "binomial", dtrain, weights = wt)
+
+# linear?
+mydata = test[, c(6,8,39,41)] %>%
+    dplyr::select_if(is.numeric)
+
+predictors = colnames(mydata)
+
+mydata = mydata %>%
+    mutate(logit = log(pred/(1-pred))) %>%
+    gather(key = "predictors", value = "predictor.value", -logit)
+    
+ggplot(mydata, aes(logit, predictor.value)) + geom_point(size = 0.5, alpha = 0.5) + geom_smooth(method = "loess") + theme_bw() + theme_bw() + facet_wrap(~predictors, scales = "free_y")
+
+#check each variable for graph?
+
+#actual best:
+poly = glm(Result ~ Home_Goals + Away_Goals + poly(Home_Shots, deg=2) + Away_Shots + poly(Home_PIM, deg=2) + Away_PIM + Home_Corsi + Away_Corsi + Home_HT + Away_HT + Home_EN + Away_EN + Home_BS + Away_BS + Home_SH + Away_SH + Home_DIF + Away_DIF + Home_W + poly(Away_W, deg=2) + Home_P + poly(Away_P, deg=3) + Home_SV + Away_SV, dtrain, family = "binomial") #57.95%
+
+pred = predict(poly, newdata = test, type = "response")
+
+pred = round(pred)
+
+pred = as.factor(pred)
+
+dtest$Result = ifelse(dtest$Result=="W", 1, 0)
+dtest$Result = as.factor(dtest$Result)
+
+confusionMatrix(dtest$Result, pred)

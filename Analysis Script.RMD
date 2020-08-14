@@ -1,0 +1,264 @@
+### NHL Prediction using Machine Learning ###
+
+## Libraries ##
+library(readxl) # importing xls & xlsx files
+library(dplyr) # used for nesting/chaining
+library(tidyr) # data cleaning
+library(stringr) # Used to detect OT and Shootouts
+library(writexl) # exporting to xlsx file
+library(chron) # Date conversion to Time
+library(stats) # Group Functional
+library(plyr) # ddpylr for aggregation
+
+# Set up Directories
+
+getwd()
+
+setwd("C:/Users/David/Documents/MSDS 696/data")
+
+# Import Data
+raw_2018 = read_excel("2017-2018 Training Base.xlsx", col_names = TRUE)
+raw_2019 = read_excel("2018-2019 Training Base.xlsx", col_names = TRUE)
+raw_2020 = read_excel("2019-2020 Test Base.xlsx", col_names = TRUE)
+
+raw_2018 = raw_2018[,-2]
+raw_2019 = raw_2019[,-2]
+
+
+dt = rbind(raw_2018, raw_2019, raw_2020)
+
+# Convert data to factors
+dt$Result = as.factor(dt$Result)
+dt$Home = as.factor(dt$Home)
+dt$Away = as.factor(dt$Away)
+dt$Game_Length = as.factor(dt$Game_Length)
+
+dt$Home_PIM = as.numeric(dt$Home_PIM)
+dt$Away_PIM = as.numeric(dt$Away_PIM)
+
+str(dt)
+summary(dt)
+
+# Function to pull game data for min and max stats
+
+home_grab = function(x) {
+    gameinfo = list(paste(dt$Home[x]), paste(dt$Date[x]), paste(dt$Result[x]))
+    return(gameinfo)
+}
+
+
+away_grab = function(x) {
+    gameinfo = list(paste(dt$Away[x]), paste(dt$Date[x]), paste(dt$Result[x]))
+    return(gameinfo)
+}
+
+
+
+# Exploring Game stats - goals
+summary(df$Home_G)
+home_grab(df$Home_G==10)
+
+summary(df$Away_G)
+away_grab(df$Away_G==9)
+
+# Exploring Game stats - max shots
+summary(df$Home_S)
+home_grab(df$Home_S==58) #Home team LOST
+
+summary(df$Away_S)
+away_grab(df$Away_S==60) #Away team LOST
+
+# Exploring Game stats - min shots
+home_grab(df$Home_S==13) #Home team LOST both games
+away_grab(df$Away_S==13) #Away team LOST
+
+# Exploring Game stats - max hits
+summary(df$Home_H)
+home_grab(df$Home_H==54) #Home team WON
+
+summary(df$Away_H)
+away_grab(df$Away_H==67) #Away team WON
+
+# Exploring Game stats - min hits
+home_grab(df$Home_H==4) #Home team WON all 4 games
+away_grab(df$Away_H==2) #Away team split decision
+
+# Exploring Game stats - max blocked shots
+summary(df$Home_BS)
+home_grab(df$Home_BS==33) #Home team WON both games
+
+summary(df$Away_BS)
+away_grab(df$Away_BS==33) #Away team WON both games
+
+# Exploring Game stats - min blocked shots
+home_grab(df$Home_BS==2) #Home team LOST all 4 games
+away_grab(df$Away_BS==2) #Away team LOST
+
+# Exploring Game stats - max PIM
+df$Home_PIM = as.numeric(df$Home_PIM)
+df$Away_PIM = as.numeric(df$Away_PIM)
+
+summary(df$Home_PIM)
+home_grab(df$Home_PIM==64) #Home team WON 
+
+summary(df$Away_PIM)
+away_grab(df$Away_PIM==84) #Away team LOST
+
+# Exploring Game stats - min PIM
+table(df$Result[df$Home_PIM==0]) #31 Away wins, 25 Home wins
+table(df$Result[df$Away_PIM==0]) #18 Away wins, 24 Home wins
+
+# Exploring Game stats - max Corsi (Same teams)
+summary(df$Home_Corsi)
+home_grab(df$Home_Corsi==74.8) #Home team WON
+
+summary(df$Away_Corsi)
+away_grab(df$Away_Corsi==74.10) #Away team LOST
+
+# Exploring Game stats - min Corsi
+home_grab(df$Home_Corsi==25.9) #Home team WON
+away_grab(df$Away_Corsi==25.2) #Away team LOST
+
+# Exploring Game stats - max OFS (Same teams)
+summary(df$Home_OFS)
+home_grab(df$Home_OFS==86.5) #Home team LOST
+
+summary(df$Away_OFS)
+away_grab(df$Away_OFS==82.8) #Away team LOST
+
+# Exploring Game stats - min OFS
+home_grab(df$Home_OFS==18) #Home team WON
+away_grab(df$Away_OFS==13.9) #Away team WON
+
+
+attach(dt)
+
+# Aggregated Analysis
+dtrain = read_excel("Training Final CM.xlsx", col_names = TRUE)
+dtest = read_excel("Test Final CM.xlsx", col_names = TRUE)
+
+# Remove results from test set
+test = dtest[,-4]
+
+# Remove Team Names and Data from training and test sets
+dtrain = dtrain[, -c(1:3, 37,38)] #dont need games played with cm
+
+dtest = dtest[, -c(1:3, 37,38)]
+
+# Convert data to factors
+dtrain$Result = as.factor(dtrain$Result)
+
+dtest$Result = as.factor(dtest$Result)
+
+dt = rbind(dtrain, dtest)
+
+attach(dt)
+
+# Goals - Home and Away
+hist(Home_Goals)
+abline(v = mean(Home_Goals), col = "blue")
+hist(Away_Goals)
+abline(v = mean(Away_Goals), col = "blue")
+
+shapiro.test(Home_Goals)
+shapiro.test(Away_Goals) #P_value is less than 0.05, so that we reject the null hypothesis that the data is normally distributed
+
+normalize = function(x) {
+(x-min(x))/(max(x) - min(x))
+}
+
+cor(Home_Goals, Away_Goals)
+
+dt1 = dt[,c(2:3)]
+
+dt1 = lapply(dt1, normalize)
+
+#T-Test
+#dependent variable needs to assume normality
+normalize = function(x) {
+    (x-min(x))/(max(x) - min(x))
+}
+
+#normalize all variables
+dt1 = dt[,c(2:3)]
+
+dt1 = lapply(dt1, normalize)
+
+t.test(dt1$Home_Goals, dt1$Away_Goals, paired = FALSE) # rejecting null that there is no dif in means
+#should be a false paired test since the data comes from different particpipants
+
+# Corsi
+
+hist(Home_Corsi)
+
+abline(v = mean(Home_Corsi), col = "blue")
+
+hist((Away_Corsi))
+abline(v = mean(Away_Corsi), col = "blue")
+
+
+shapiro.test(Home_Corsi)
+shapiro.test(Away_Corsi)
+
+cor(Home_Corsi, Away_Corsi)
+
+dt1 = dt[,c(8:9)]
+
+dt1 = lapply(dt1, normalize)
+
+t.test(dt1$Home_Corsi, dt1$Away_Corsi, paired = FALSE) 
+
+# correlation for all variables
+cor(dt[, unlist(lapply(dt, is.numeric))])
+
+# set target variable
+dt1 = dt
+attach(dt1)
+
+dt1$target = ifelse(dt1$Result=="W", 1,0)
+numeric_columns = setdiff(names(dt1), 'Result')
+
+target_cor = cor(dt1[,numeric_columns])['target',]
+
+target_cor =  target_cor[order(target_cor, decreasing = TRUE)]
+
+target_cor
+
+#also use absolute values for correlation str
+abs_cor =  abs(cor(dt1[,numeric_columns])['target',])
+
+abs_cor =  abs_cor[order(abs_cor, decreasing = TRUE)]
+
+abs_cor
+
+# away points correlation
+
+away_points_cor = cor(dt[, unlist(lapply(dt, is.numeric))])
+away_points_cor = away_points_cor[,37]
+away_points_cor = away_points_cor[order(away_points_cor, decreasing = TRUE)]
+head(away_points_cor)
+
+#ignoring home points
+head(away_points_cor, n= 25L)
+
+
+# chi-square
+chisq.test(table(dt[,c("Result", "Home_Goals")])) #fail to reject the null hypothesis that result and home_goals are two independant variables. 
+
+chisq.test(table(dt[,c("Home_Goals", "Away_Goals")]))
+
+# selecting home or away only
+dt_away = dt[, -1]
+dt_away= dt_away[, rep(c(FALSE, TRUE), 22)]
+attach(dt_away)
+
+away_points_cor = cor(dt_away[, unlist(lapply(dt_away, is.numeric))])
+away_points_cor = away_points_cor[,18]
+away_points_cor = away_points_cor[order(away_points_cor, decreasing = TRUE)]
+head(away_points_cor)
+
+# save %
+away_save_cor = cor(dt_away[, unlist(lapply(dt_away, is.numeric))])
+away_save_cor = away_save_cor[,20]
+away_save_cor = away_save_cor[order(away_save_cor, decreasing = TRUE)]
+head(away_save_cor)
