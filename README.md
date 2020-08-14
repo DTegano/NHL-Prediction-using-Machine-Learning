@@ -609,12 +609,12 @@ mean of x mean of y
 0.2995634 0.4003824 
 ```
 
-Based on the p-value of the T-test, we can reject the null hypothesis that there is no difference in the means between home and away goals. There is a statistically significant different between the two variables. I'll also note that the T-test was not paired since the data comes from different participants.
+Based on the p-value of the T-test, we can reject the null hypothesis that there is no difference in the means between home and away goals. There is a statistically significant difference between the two variables. I'll also note that the T-test was not paired since the data comes from different participants.
 
 
 <b> Corsi </b>
 
-Next, I'll do the same commands as I did with the goal variables but with Corsi now. Looking ahead at correlations for the Result variable, you'll understand later on why this variable was chosen to be looked at.
+Next, I'll do the same commands as I did with the Goal variables but with the Corsi variable. Looking ahead at correlations for the Result variable, you'll understand later on why this variable was chosen to be looked at.
 
 ```
 hist(Home_Corsi)
